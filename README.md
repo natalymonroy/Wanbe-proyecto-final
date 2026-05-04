@@ -1,1 +1,26 @@
-# Wanbe-proyecto-final
+# Wanbe proyecto final
+
+Aplicacion visual sencilla creada en Python con `tkinter`.
+
+La idea es conservar la base de la app Wanbe original, pero en una version mas simple:
+
+- Pantalla de inicio con buscador.
+- Categorias SAT, RENAP y MUNI.
+- Checklist de requisitos antes de iniciar cada tramite.
+- Guia paso a paso con barra de progreso.
+- Enlaces a portales oficiales o de referencia.
+
+## Temas de Python usados
+
+- Listas para requisitos y pasos.
+- Matrices para rutas y portales municipales.
+- Diccionarios para guardar la informacion de tramites.
+- Recursion en el buscador y en la busqueda de categorias.
+- Interfaz grafica con `tkinter`.
+
+## Ejecutar
+
+```bash
+python3 proyecto.py
+```
+
