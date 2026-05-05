@@ -158,6 +158,28 @@ def render_layout(titulo: str, contenido: str) -> str:
     .step-number {{ color: var(--purple); font-weight: 800; font-size: 12px; }}
     .requirements {{ background: var(--warning-bg); border-color: var(--warning); }}
     .requirements h3, .requirements li {{ color: var(--warning); }}
+    .progress {{
+      height: 10px;
+      background: var(--border);
+      margin: 8px 0 14px;
+      overflow: hidden;
+    }}
+    .progress span {{
+      display: block;
+      height: 100%;
+      background: var(--purple);
+    }}
+    .step-nav {{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }}
+    .step-nav .secondary {{
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }}
     @media (max-width: 420px) {{
       main {{ padding: 12px; }}
       .hero h1 {{ font-size: 21px; }}
@@ -274,29 +296,58 @@ def render_categoria(categoria_id: str) -> str:
     )
 
 
-def render_tramite(tramite_id: str) -> str:
-    """Pagina de detalle de un tramite."""
+def obtener_categoria_por_portal(portal: str) -> str:
+    """Devuelve la categoria principal segun el portal del tramite."""
+    if portal == "SAT":
+        return "sat"
+    return "renap"
+
+
+def render_tramite(tramite_id: str, paso_actual: int = 1) -> str:
+    """Pagina de detalle de un tramite mostrando un paso a la vez."""
     tramite = TRAMITES.get(tramite_id)
     if tramite is None:
         return render_layout("No encontrado", '<a class="button back" href="/">Volver</a><div class="panel"><h3>No encontrado</h3></div>')
 
     requisitos = "".join(f"<li>{escape(requisito)}</li>" for requisito in tramite["requisitos"])
-    pasos = []
-    for numero, paso in enumerate(tramite["pasos"], start=1):
-        items = "".join(f"<li>{escape(item)}</li>" for item in paso["items"])
-        enlace = ""
-        if paso.get("enlace"):
-            enlace = f'<a class="button" href="{escape(paso["enlace"])}" target="_blank" rel="noopener">Abrir enlace oficial</a>'
-        pasos.append(
-            f"""
+    total_pasos = len(tramite["pasos"])
+    paso_actual = max(1, min(paso_actual, total_pasos))
+    paso = tramite["pasos"][paso_actual - 1]
+    progreso = int((paso_actual / total_pasos) * 100)
+
+    items = "".join(f"<li>{escape(item)}</li>" for item in paso["items"])
+    enlace = ""
+    if paso.get("enlace"):
+        enlace = f'<a class="button" href="{escape(paso["enlace"])}" target="_blank" rel="noopener">Abrir enlace oficial</a>'
+
+    categoria_url = crear_ruta(obtener_categoria_por_portal(tramite["portal"]))
+    regresar_url = (
+        f"{crear_ruta_tramite(tramite_id)}?paso={paso_actual - 1}"
+        if paso_actual > 1
+        else categoria_url
+    )
+    continuar_url = (
+        f"{crear_ruta_tramite(tramite_id)}?paso={paso_actual + 1}"
+        if paso_actual < total_pasos
+        else "/"
+    )
+    continuar_texto = "Continuar" if paso_actual < total_pasos else "Finalizar"
+
+    paso_html = f"""
 <article class="panel step">
-  <div class="step-number">Paso {numero}</div>
+  <div class="step-number">Paso {paso_actual} de {total_pasos}</div>
+  <div class="progress" aria-label="Progreso del tramite">
+    <span style="width:{progreso}%"></span>
+  </div>
   <h3>{escape(paso["titulo"])}</h3>
   <p>{escape(paso["texto"])}</p>
   <ul>{items}</ul>
   {enlace}
-</article>"""
-        )
+</article>
+<nav class="step-nav" aria-label="Navegacion de pasos">
+  <a class="button secondary" href="{escape(regresar_url)}">Regresar</a>
+  <a class="button" href="{escape(continuar_url)}">{continuar_texto}</a>
+</nav>"""
 
     return render_layout(
         tramite["titulo"],
@@ -310,7 +361,7 @@ def render_tramite(tramite_id: str) -> str:
   <h3>Documentos indispensables</h3>
   <ul>{requisitos}</ul>
 </section>
-{''.join(pasos)}
+{paso_html}
 """,
     )
 
@@ -336,7 +387,12 @@ class WanbeHandler(BaseHTTPRequestHandler):
             return
 
         if path.startswith("/tramite/"):
-            self.send_html(render_tramite(path.removeprefix("/tramite/")))
+            paso = parse_qs(parsed.query).get("paso", ["1"])[0]
+            try:
+                paso_actual = int(paso)
+            except ValueError:
+                paso_actual = 1
+            self.send_html(render_tramite(path.removeprefix("/tramite/"), paso_actual))
             return
 
         self.send_response(404)
