@@ -7,7 +7,7 @@ Usa tkinter, por lo que no necesita instalar librerias externas.
 
 Temas de programacion aplicados:
 - Listas: pasos y requisitos de cada tramite.
-- Matrices: rutas principales y portales municipales.
+- Matrices: rutas principales de la aplicacion.
 - Diccionarios: base de datos de tramites.
 - Recursion: buscador dentro del arbol de categorias.
 """
@@ -34,7 +34,6 @@ COLORS = {
     "primary": "#183499",
     "purple": "#5C1399",
     "soft_blue": "#7886C7",
-    "green": "#15803d",
     "warning_bg": "#fff7ed",
     "warning": "#92400e",
 }
@@ -47,18 +46,6 @@ RUTAS = [
     ["Inicio", "SAT", "Juridicos", "Habilitacion de Libros"],
     ["Inicio", "RENAP", "Tramite de DPI"],
     ["Inicio", "RENAP", "Certificados en Linea"],
-    ["Inicio", "MUNI", "Multas de Transito"],
-    ["Inicio", "MUNI", "Impuestos Municipales"],
-    ["Inicio", "MUNI", "Pago de Servicios"],
-]
-
-
-# Matriz: nombre del portal y enlace oficial o de referencia.
-PORTALES_MUNICIPALES = [
-    ["Muni Guate", "https://especiales.muniguate.com/remisiones.htm"],
-    ["Muni Mixco", "https://consultas.munimixco.gob.gt/emixtra/consulta"],
-    ["Villa Nueva", "https://www.villanueva.gob.gt/"],
-    ["PNC / Provincia", "https://sistemas.transito.gob.gt/consultaremisiones/consultaremisiones"],
 ]
 
 
@@ -72,10 +59,9 @@ TRAMITES = {
         "requisitos": ["Placa del vehiculo", "NIT del propietario"],
         "pasos": [
             {
-                "titulo": "Consulta multas",
-                "texto": "Antes de pagar, revisa si el vehiculo tiene multas pendientes.",
-                "items": ["Selecciona tu municipalidad.", "Consulta por placa.", "Guarda comprobante."],
-                "tipo": "municipalidad",
+                "titulo": "Revisa datos del vehiculo",
+                "texto": "Antes de iniciar, ten claros los datos que la SAT pedira para generar el formulario.",
+                "items": ["Confirma la placa.", "Confirma el NIT del propietario.", "Ten acceso a Declaraguate."],
             },
             {
                 "titulo": "Genera formulario SAT-4091",
@@ -211,81 +197,6 @@ TRAMITES = {
             },
         ],
     },
-    "multas": {
-        "titulo": "Multas de Transito",
-        "portal": "MUNI",
-        "icono": "MUL",
-        "descripcion": "Consulta multas por placa o numero de multa.",
-        "requisitos": ["Placa del vehiculo", "DPI o licencia"],
-        "pasos": [
-            {
-                "titulo": "Elegir portal",
-                "texto": "Selecciona la municipalidad donde deseas consultar.",
-                "items": ["Usa el portal oficial.", "Ten a mano la placa."],
-                "tipo": "municipalidad",
-            },
-            {
-                "titulo": "Consultar",
-                "texto": "Ingresa placa o numero de multa.",
-                "items": ["Revisa fecha.", "Revisa monto.", "Guarda captura."],
-            },
-            {
-                "titulo": "Pagar",
-                "texto": "Paga en linea o presencial segun la municipalidad.",
-                "items": ["Guarda comprobante.", "Verifica que la deuda quede saldada."],
-            },
-        ],
-    },
-    "impuestos": {
-        "titulo": "Impuestos Municipales",
-        "portal": "MUNI",
-        "icono": "IMP",
-        "descripcion": "Consulta y pago de IUSI, ornato u obligaciones locales.",
-        "requisitos": ["DPI o NIT", "Numero de cuenta o recibo"],
-        "pasos": [
-            {
-                "titulo": "Portal municipal",
-                "texto": "Busca contribuyentes, IUSI o boleto de ornato.",
-                "items": ["Elige tu municipio.", "Ingresa datos solicitados."],
-                "tipo": "municipalidad",
-            },
-            {
-                "titulo": "Revisar deuda",
-                "texto": "Verifica montos, fechas y recargos.",
-                "items": ["No pagues si los datos no coinciden.", "Descarga boleta."],
-            },
-            {
-                "titulo": "Pagar",
-                "texto": "Paga en banco o en linea.",
-                "items": ["Guarda comprobante.", "Revisa estado despues del pago."],
-            },
-        ],
-    },
-    "servicios": {
-        "titulo": "Pago de Servicios",
-        "portal": "MUNI",
-        "icono": "SER",
-        "descripcion": "Pago de agua, luz, basura u otros servicios municipales.",
-        "requisitos": ["Numero de usuario o medidor", "Medio de pago"],
-        "pasos": [
-            {
-                "titulo": "Portal de servicios",
-                "texto": "Entra al sitio de tu municipio.",
-                "items": ["Busca pago de servicios.", "Ten tu recibo a mano."],
-                "tipo": "municipalidad",
-            },
-            {
-                "titulo": "Selecciona servicio",
-                "texto": "Elige agua, alumbrado, basura u otro.",
-                "items": ["Ingresa numero de usuario.", "Verifica direccion o nombre."],
-            },
-            {
-                "titulo": "Pagar",
-                "texto": "Confirma monto y realiza pago.",
-                "items": ["Guarda comprobante.", "Verifica que se aplique."],
-            },
-        ],
-    },
 }
 
 
@@ -326,13 +237,6 @@ MENU = [
         "subtitulo": "DPI y certificados",
         "icono": "DPI",
         "hijos": [{"tramite": "dpi"}, {"tramite": "certificados"}],
-    },
-    {
-        "id": "muni",
-        "titulo": "Portal MUNI",
-        "subtitulo": "Multas, impuestos y servicios",
-        "icono": "MUN",
-        "hijos": [{"tramite": "multas"}, {"tramite": "impuestos"}, {"tramite": "servicios"}],
     },
 ]
 
@@ -629,7 +533,7 @@ class WanbeApp:
         ).pack(fill="x", padx=16, pady=(20, 4))
         tk.Label(
             hero,
-            text="Guia visual sencilla para tramites de SAT, RENAP y municipalidades.",
+            text="Guia visual sencilla para tramites de SAT y RENAP.",
             bg=COLORS["primary"],
             fg="#dbeafe",
             font=("Helvetica", 10),
@@ -824,9 +728,6 @@ class WanbeApp:
         for numero, item in enumerate(paso["items"], start=1):
             tk.Label(caja, text=f"{numero}. {item}", bg=COLORS["white"], fg=COLORS["text"], font=("Helvetica", 10), wraplength=320, justify="left").pack(anchor="w", padx=20, pady=2)
 
-        if paso.get("tipo") == "municipalidad":
-            self.selector_municipal(caja)
-
         if paso.get("enlace"):
             tk.Button(
                 caja,
@@ -842,22 +743,6 @@ class WanbeApp:
 
         self.documentos(tramite)
         self.navegacion_pasos(tramite_id)
-
-    def selector_municipal(self, padre: tk.Widget) -> None:
-        caja = tk.Frame(padre, bg=COLORS["card"], highlightbackground=COLORS["border"], highlightthickness=1)
-        caja.pack(fill="x", padx=14, pady=12)
-
-        elegido = tk.StringVar(value=PORTALES_MUNICIPALES[0][0])
-        tk.Label(caja, text="Portal municipal", bg=COLORS["card"], fg=COLORS["text"], font=("Helvetica", 10, "bold")).pack(anchor="w", padx=10, pady=(10, 4))
-        tk.OptionMenu(caja, elegido, *[fila[0] for fila in PORTALES_MUNICIPALES]).pack(fill="x", padx=10, pady=4)
-
-        def abrir() -> None:
-            for nombre, url in PORTALES_MUNICIPALES:
-                if nombre == elegido.get():
-                    webbrowser.open(url)
-                    break
-
-        tk.Button(caja, text="Abrir portal", command=abrir, bg=COLORS["green"], fg="white", relief="flat", font=("Helvetica", 10, "bold")).pack(fill="x", padx=10, pady=(6, 10))
 
     def documentos(self, tramite: dict) -> None:
         caja = tk.Frame(self.contenido, bg=COLORS["warning_bg"], highlightbackground=COLORS["warning"], highlightthickness=1)
@@ -915,7 +800,7 @@ class WanbeApp:
             "Proyecto Python sencillo de Wanbe.\n\n"
             "Incluye:\n"
             "- Listas para requisitos y pasos.\n"
-            "- Matrices para rutas y portales.\n"
+            "- Matrices para rutas de navegacion.\n"
             "- Diccionarios para tramites.\n"
             "- Recursion en el buscador."
         )

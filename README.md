@@ -5,7 +5,7 @@ Aplicacion visual sencilla creada en Python con `tkinter`.
 La idea es conservar la base de la app Wanbe original, pero en una version mas simple:
 
 - Pantalla de inicio con buscador.
-- Categorias SAT, RENAP y MUNI.
+- Categorias SAT y RENAP.
 - Checklist de requisitos antes de iniciar cada tramite.
 - Guia paso a paso con barra de progreso.
 - Enlaces a portales oficiales o de referencia.
@@ -13,7 +13,7 @@ La idea es conservar la base de la app Wanbe original, pero en una version mas s
 ## Temas de Python usados
 
 - Listas para requisitos y pasos.
-- Matrices para rutas y portales municipales.
+- Matrices para rutas de navegacion.
 - Diccionarios para guardar la informacion de tramites.
 - Recursion en el buscador y en la busqueda de categorias.
 - Interfaz grafica con `tkinter`.
@@ -23,4 +23,3 @@ La idea es conservar la base de la app Wanbe original, pero en una version mas s
 ```bash
 python3 proyecto.py
 ```
-
