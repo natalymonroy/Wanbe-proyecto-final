@@ -41,9 +41,8 @@ COLORS = {
 
 # Matriz: cada fila representa una ruta general de navegacion.
 RUTAS = [
-    ["Inicio", "SAT", "Vehiculos", "Pago de Calcomania"],
+    ["Inicio", "SAT", "Vehiculos", "Pago de Calcomanía"],
     ["Inicio", "SAT", "Individuales", "Solicitud de NIT"],
-    ["Inicio", "SAT", "Juridicos", "Habilitacion de Libros"],
     ["Inicio", "RENAP", "Tramite de DPI"],
     ["Inicio", "RENAP", "Certificados en Linea"],
 ]
@@ -52,7 +51,7 @@ RUTAS = [
 # Diccionario principal de tramites.
 TRAMITES = {
     "calcomania": {
-        "titulo": "Pago de Calcomania",
+        "titulo": "Pago de Calcomanía",
         "portal": "SAT",
         "icono": "CAR",
         "descripcion": "Pago del Impuesto Sobre Circulacion de Vehiculos.",
@@ -75,7 +74,7 @@ TRAMITES = {
                 "items": ["Verifica el monto.", "Paga en linea o ventanilla.", "Guarda recibo."],
             },
             {
-                "titulo": "Imprime calcomania",
+                "titulo": "Imprime calcomanía",
                 "texto": "Descarga el distintivo en PDF para portarlo en tu vehiculo.",
                 "items": ["Revisa que la placa sea correcta.", "Imprime o guarda el PDF."],
                 "enlace": "https://portal.sat.gob.gt/portal/impresion-calcomania/",
@@ -114,31 +113,6 @@ TRAMITES = {
                 "titulo": "Enviar solicitud",
                 "texto": "Revisa toda la informacion antes de finalizar.",
                 "items": ["Confirma datos.", "Guarda usuario y clave.", "Espera respuesta por correo."],
-            },
-        ],
-    },
-    "libros": {
-        "titulo": "Habilitacion de Libros",
-        "portal": "SAT",
-        "icono": "LIB",
-        "descripcion": "Formulario SAT-7121 para libros contables.",
-        "requisitos": ["NIT", "Clave SAT", "Boleta SAT-2000 si aplica"],
-        "pasos": [
-            {
-                "titulo": "Abrir Declaraguate",
-                "texto": "Busca el formulario SAT-7121 en la seccion Varios.",
-                "items": ["Selecciona habilitacion de libros.", "Ingresa datos del contribuyente."],
-                "enlace": "https://declaraguate.sat.gob.gt/declaraguate-web/",
-            },
-            {
-                "titulo": "Configurar libros",
-                "texto": "Selecciona tipo de libro y modalidad.",
-                "items": ["Manual o computarizado.", "Cantidad de libros.", "Establecimiento si aplica."],
-            },
-            {
-                "titulo": "Pagar y resolver",
-                "texto": "Congela, paga SAT-2000 e imprime resolucion.",
-                "items": ["Guarda boleta.", "Imprime resolucion.", "Archiva documentos."],
             },
         ],
     },
@@ -205,13 +179,13 @@ MENU = [
     {
         "id": "sat",
         "titulo": "Portal SAT",
-        "subtitulo": "Vehiculos, NIT y empresas",
+        "subtitulo": "Vehiculos y NIT",
         "icono": "SAT",
         "hijos": [
             {
                 "id": "vehiculos",
                 "titulo": "Vehiculos",
-                "subtitulo": "Calcomania y placas",
+                "subtitulo": "Calcomanía y placas",
                 "icono": "CAR",
                 "hijos": [{"tramite": "calcomania"}],
             },
@@ -221,13 +195,6 @@ MENU = [
                 "subtitulo": "NIT personal",
                 "icono": "NIT",
                 "hijos": [{"tramite": "nit"}],
-            },
-            {
-                "id": "juridicos",
-                "titulo": "Juridicos",
-                "subtitulo": "Empresas y libros",
-                "icono": "EMP",
-                "hijos": [{"tramite": "libros"}],
             },
         ],
     },
