@@ -20,6 +20,20 @@ La idea es conservar la base de la app Wanbe original, pero en una version mas s
 
 ## Ejecutar
 
+Aplicacion de escritorio:
+
 ```bash
 python3 proyecto.py
+```
+
+Vista web local:
+
+```bash
+python3 vista_web.py
+```
+
+Luego abrir:
+
+```text
+http://127.0.0.1:8000
 ```
