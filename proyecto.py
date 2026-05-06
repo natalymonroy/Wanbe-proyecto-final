@@ -743,7 +743,7 @@ class WanbeApp:
 
         tk.Button(
             barra,
-            text="Anterior",
+            text="Regresar",
             command=lambda: self.cambiar_paso(tramite_id, -1),
             state="normal" if indice > 0 else "disabled",
             bg=COLORS["card"],
@@ -753,7 +753,7 @@ class WanbeApp:
             pady=10,
         ).pack(side="left", fill="x", expand=True, padx=(0, 5))
 
-        texto = "Finalizar" if indice == total - 1 else "Siguiente"
+        texto = "Finalizar" if indice == total - 1 else "Continuar"
         comando = lambda: self.finalizar(tramite_id) if indice == total - 1 else self.cambiar_paso(tramite_id, 1)
         tk.Button(
             barra,
