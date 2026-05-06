@@ -214,17 +214,34 @@ def normalizar(texto: str) -> str:
     return "".join(letra for letra in texto if unicodedata.category(letra) != "Mn")
 
 
+def puntuar_coincidencia(texto: str, consulta: str) -> int:
+    """Asigna prioridad a coincidencias mas utiles para el buscador."""
+    texto_normalizado = normalizar(texto)
+    consulta_normalizada = normalizar(consulta)
+
+    if not consulta_normalizada or consulta_normalizada not in texto_normalizado:
+        return -1
+
+    if texto_normalizado.startswith(consulta_normalizada):
+        return 3
+    if any(parte.startswith(consulta_normalizada) for parte in texto_normalizado.split()):
+        return 2
+    if consulta_normalizada in texto_normalizado:
+        return 1
+    return 0
+
+
 def buscar_recursivo(nodos: list[dict], consulta: str, ruta: str = "") -> list[dict]:
     """Busca tramites dentro del arbol MENU usando recursion."""
     resultados = []
-    consulta = normalizar(consulta)
 
     for nodo in nodos:
         if "tramite" in nodo:
             clave = nodo["tramite"]
             tramite = TRAMITES[clave]
             texto = " ".join([tramite["titulo"], tramite["descripcion"], tramite["portal"]])
-            if consulta in normalizar(texto):
+            puntaje = puntuar_coincidencia(texto, consulta)
+            if puntaje >= 0:
                 resultados.append(
                     {
                         "tipo": "tramite",
@@ -232,12 +249,14 @@ def buscar_recursivo(nodos: list[dict], consulta: str, ruta: str = "") -> list[d
                         "titulo": tramite["titulo"],
                         "subtitulo": ruta,
                         "icono": tramite["icono"],
+                        "prioridad": puntaje,
                     }
                 )
             continue
 
         texto_categoria = f"{nodo['titulo']} {nodo['subtitulo']}"
-        if consulta in normalizar(texto_categoria):
+        puntaje = puntuar_coincidencia(texto_categoria, consulta)
+        if puntaje >= 0:
             resultados.append(
                 {
                     "tipo": "categoria",
@@ -245,13 +264,23 @@ def buscar_recursivo(nodos: list[dict], consulta: str, ruta: str = "") -> list[d
                     "titulo": nodo["titulo"],
                     "subtitulo": nodo["subtitulo"],
                     "icono": nodo["icono"],
+                    "prioridad": puntaje,
                 }
             )
 
         nueva_ruta = f"{ruta} > {nodo['titulo']}" if ruta else nodo["titulo"]
         resultados.extend(buscar_recursivo(nodo.get("hijos", []), consulta, nueva_ruta))
 
-    return resultados
+    return sorted(
+        resultados,
+        key=lambda item: (
+            item.get("prioridad", 0),
+            1 if item.get("tipo") == "tramite" else 0,
+            len(item.get("subtitulo", "")),
+            item.get("titulo", ""),
+        ),
+        reverse=True,
+    )
 
 
 def encontrar_categoria(nodos: list[dict], categoria_id: str) -> dict | None:

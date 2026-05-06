@@ -41,6 +41,11 @@ def render_layout(titulo: str, contenido: str) -> str:
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{escape(titulo)} - Wanbe</title>
   <style>
+    @property --glow {{
+      syntax: '<color>';
+      inherits: false;
+      initial-value: transparent;
+    }}
     :root {{
       --bg: {COLORS["background"]};
       --white: {COLORS["white"]};
@@ -57,41 +62,49 @@ def render_layout(titulo: str, contenido: str) -> str:
     * {{ box-sizing: border-box; }}
     body {{
       margin: 0;
-      background: var(--bg);
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(92, 19, 153, 0.14), transparent 34%),
+        radial-gradient(circle at right top, rgba(120, 134, 199, 0.16), transparent 28%),
+        linear-gradient(180deg, #f4f7ff 0%, #e9eefc 100%);
       color: var(--text);
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: "Segoe UI", "Aptos", "Helvetica Neue", Arial, sans-serif;
     }}
     .phone {{
-      width: min(430px, calc(100% - 20px));
-      min-height: calc(100vh - 20px);
-      margin: 10px auto;
+      width: min(440px, calc(100% - 18px));
+      min-height: calc(100vh - 18px);
+      margin: 9px auto;
       background: var(--white);
-      border: 1px solid var(--border);
-      box-shadow: 0 18px 40px rgba(24, 52, 153, 0.12);
+      border: 1px solid rgba(219, 227, 240, 0.9);
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(24, 52, 153, 0.15);
       overflow: hidden;
     }}
     header {{
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 14px 16px;
+      padding: 14px 16px 13px;
       border-bottom: 1px solid var(--border);
       background: var(--white);
       position: sticky;
       top: 0;
       z-index: 2;
+      backdrop-filter: blur(8px);
     }}
-    header img {{ width: 44px; height: 44px; object-fit: contain; }}
-    header strong {{ display: block; color: var(--primary); font-size: 18px; }}
+    header img {{ width: 44px; height: 44px; object-fit: contain; filter: drop-shadow(0 4px 10px rgba(24, 52, 153, 0.14)); }}
+    header strong {{ display: block; color: var(--primary); font-size: 18px; letter-spacing: 0.4px; }}
     header span {{ color: var(--muted); font-size: 11px; font-weight: 700; }}
     main {{ padding: 16px; }}
     .hero {{
-      background: linear-gradient(135deg, var(--purple), var(--primary));
+      background: linear-gradient(135deg, #4e0f88 0%, var(--purple) 42%, var(--primary) 100%);
       color: white;
-      padding: 22px 18px;
+      padding: 22px 18px 20px;
       margin-bottom: 14px;
+      border-radius: 20px;
+      box-shadow: 0 14px 28px rgba(92, 19, 153, 0.18);
     }}
-    .hero h1 {{ margin: 0 0 8px; font-size: 24px; line-height: 1.12; }}
+    .hero h1 {{ margin: 0 0 8px; font-size: 24px; line-height: 1.1; letter-spacing: -0.3px; }}
     .hero p {{ margin: 0; color: #dbeafe; font-size: 13px; line-height: 1.4; }}
     form {{ display: flex; gap: 8px; margin-bottom: 14px; }}
     input {{
@@ -100,9 +113,10 @@ def render_layout(titulo: str, contenido: str) -> str:
       border: 1px solid var(--border);
       background: var(--card);
       color: var(--text);
-      padding: 12px;
+      padding: 12px 14px;
       font-size: 14px;
       outline: none;
+      border-radius: 14px;
     }}
     button, .button {{
       border: 0;
@@ -116,8 +130,11 @@ def render_layout(titulo: str, contenido: str) -> str:
       justify-content: center;
       cursor: pointer;
       min-height: 42px;
+      border-radius: 14px;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
     }}
-    .back {{ background: var(--card); color: var(--text); margin-bottom: 12px; }}
+    button:hover, .button:hover {{ transform: translateY(-1px); box-shadow: 0 10px 18px rgba(24, 52, 153, 0.14); }}
+    .back {{ background: var(--card); color: var(--text); margin-bottom: 12px; box-shadow: none; }}
     .section-title {{ margin: 4px 0 12px; }}
     .section-title h2 {{ margin: 0; color: var(--primary); font-size: 21px; }}
     .section-title p {{ margin: 5px 0 0; color: var(--muted); font-size: 13px; }}
@@ -131,7 +148,11 @@ def render_layout(titulo: str, contenido: str) -> str:
       color: var(--text);
       text-decoration: none;
       margin-bottom: 10px;
+      border-radius: 18px;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
     }}
+    .card:hover {{ transform: translateY(-2px); border-color: rgba(24, 52, 153, 0.22); box-shadow: 0 14px 26px rgba(24, 52, 153, 0.12); }}
     .icon {{
       width: 44px;
       min-width: 44px;
@@ -142,6 +163,8 @@ def render_layout(titulo: str, contenido: str) -> str:
       color: white;
       font-weight: 800;
       font-size: 11px;
+      border-radius: 14px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
     }}
     .card h3 {{ margin: 0 0 4px; font-size: 16px; }}
     .card p {{ margin: 0; color: var(--muted); font-size: 12px; line-height: 1.35; }}
@@ -151,14 +174,26 @@ def render_layout(titulo: str, contenido: str) -> str:
       background: var(--card);
       padding: 14px;
       margin-bottom: 12px;
+      border-radius: 18px;
     }}
     .panel h3 {{ margin: 0 0 8px; font-size: 16px; }}
     .panel p, li {{ color: var(--muted); font-size: 13px; line-height: 1.45; }}
     .step {{ background: var(--white); }}
-    .step-number {{ color: var(--purple); font-weight: 800; font-size: 12px; }}
-    .requirements {{ background: var(--warning-bg); border-color: var(--warning); }}
+    .step-number {{ color: var(--purple); font-weight: 800; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }}
+    .requirements {{ background: var(--warning-bg); border-color: rgba(146, 64, 14, 0.25); }}
     .requirements h3, .requirements li {{ color: var(--warning); }}
+    .notice {{
+      margin-bottom: 12px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(120, 134, 199, 0.11);
+      border: 1px solid rgba(120, 134, 199, 0.22);
+      color: var(--primary);
+      font-size: 13px;
+      line-height: 1.4;
+    }}
     @media (max-width: 420px) {{
+      .phone {{ width: min(100% - 12px, 440px); margin: 6px auto; border-radius: 20px; }}
       main {{ padding: 12px; }}
       .hero h1 {{ font-size: 21px; }}
       form {{ flex-direction: column; }}
@@ -218,6 +253,10 @@ def render_inicio(query: str = "") -> str:
             for nodo in MENU
         )
 
+    contexto_busqueda = ""
+    if query:
+        contexto_busqueda = f'<div class="notice">Mostrando resultados para: <strong>{escape(query)}</strong></div>'
+
     return render_layout(
         "Inicio",
         f"""
@@ -229,6 +268,7 @@ def render_inicio(query: str = "") -> str:
   <input name="q" value="{escape(query)}" placeholder="Buscar tramite...">
   <button type="submit">Buscar</button>
 </form>
+{contexto_busqueda}
 <section class="section-title">
   <h2>Categorias</h2>
   <p>Selecciona el portal del tramite que deseas revisar.</p>
