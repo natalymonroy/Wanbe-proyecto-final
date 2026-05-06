@@ -16,24 +16,51 @@ import sys
 
 from proyecto import COLORS, MENU, TRAMITES, buscar_recursivo, encontrar_categoria
 
+# ========== CONFIGURACION DEL SERVIDOR ==========
+# Este archivo convierte la logica de proyecto.py en una interfaz web accesible desde el navegador
+# Se importan las funciones de busqueda y navegacion para reutilizar la misma logica
 
-BASE_DIR = Path(__file__).resolve().parent
-HOST = "127.0.0.1"
-DEFAULT_PORT = 8000
+BASE_DIR = Path(__file__).resolve().parent  # Directorio del archivo actual
+HOST = "127.0.0.1"  # Localhost: solo accesible localmente
+DEFAULT_PORT = 8000  # Puerto por defecto para el servidor
 
+
+# ========== FUNCIONES DE RUTEO ==========
+# Generan URLs HTML que corresponden a las rutas del servidor HTTP
 
 def crear_ruta(categoria_id: str) -> str:
-    """Crea una URL para abrir una categoria."""
+    """Crea una URL para abrir una categoria.
+    
+    Ejemplo: crear_ruta('sat') -> '/categoria/sat'
+    Luego el navegador hace GET /categoria/sat y WanbeHandler lo maneja.
+    """
     return f"/categoria/{categoria_id}"
 
 
 def crear_ruta_tramite(tramite_id: str) -> str:
-    """Crea una URL para abrir un tramite."""
+    """Crea una URL para abrir un tramite.
+    
+    Ejemplo: crear_ruta_tramite('calcomania') -> '/tramite/calcomania'
+    """
     return f"/tramite/{tramite_id}"
 
 
+# ========== FUNCIONES DE RENDERIZADO HTML ==========
+# Generan HTML completo que el navegador muestra
+# Cada funcion retorna un string con HTML valido
+
 def render_layout(titulo: str, contenido: str) -> str:
-    """Plantilla general de la vista web."""
+    """Plantilla general (master template) de la vista web.
+    
+    Contiene:
+    - Variables CSS con los colores de COLORS (proyecto.py)
+    - Header con logo y titulo
+    - Main con el contenido dinamico
+    - Estilos responsivos para móviles
+    
+    Nota: Los colores vienen directamente del diccionario COLORS
+    para mantener coherencia entre escritorio y web.
+    """
     return f"""<!doctype html>
 <html lang="es">
 <head>
@@ -208,7 +235,20 @@ def render_layout(titulo: str, contenido: str) -> str:
 
 
 def render_card(titulo: str, subtitulo: str, icono: str, url: str, color: str = "var(--primary)") -> str:
-    """Genera una tarjeta visual reutilizable."""
+    """Genera una tarjeta visual reutilizable.
+    
+    Se usa para:
+    - Mostrar categorias en la pantalla de inicio
+    - Mostrar tramites dentro de una categoria
+    - Mostrar resultados de busqueda
+    
+    Parametros:
+        titulo: nombre del item (ej: 'Pago de Calcomania')
+        subtitulo: descripcion breve (ej: 'Calcomania y placas')
+        icono: codigo corto (ej: 'CAR', 'DPI', 'PDF')
+        url: ruta para hacer clic (ej: '/tramite/calcomania')
+        color: color CSS del icono (por defecto: azul primario)
+    """
     return f"""
 <a class="card" href="{escape(url)}">
   <span class="icon" style="background:{color};">{escape(icono)}</span>
@@ -221,7 +261,14 @@ def render_card(titulo: str, subtitulo: str, icono: str, url: str, color: str = 
 
 
 def render_inicio(query: str = "") -> str:
-    """Pagina principal con SAT y RENAP."""
+    """Pantalla principal del navegador.
+    
+    TEMA: Busqueda dinamica en la web
+    - Si query esta vacio: muestra SAT y RENAP
+    - Si query tiene texto: llama buscar_recursivo (igual que en escritorio)
+    - Muestra un aviso cuando hay busqueda activa
+    - Se llama desde WanbeHandler cuando hace GET /
+    """
     if query:
         resultados = buscar_recursivo(MENU, query)
         if resultados:
@@ -269,7 +316,11 @@ def render_inicio(query: str = "") -> str:
 
 
 def render_categoria(categoria_id: str) -> str:
-    """Pagina de categoria SAT o RENAP."""
+    """Muestra una categoria con sus tramites/subcategorias.
+    
+    Se llama desde WanbeHandler cuando hace GET /categoria/{id}
+    Usa encontrar_categoria (recursivo) para buscar en el arbol MENU.
+    """
     categoria = encontrar_categoria(MENU, categoria_id)
     if categoria is None:
         return render_layout("No encontrado", '<a class="button back" href="/">Volver</a><div class="panel"><h3>No encontrado</h3></div>')
@@ -305,14 +356,30 @@ def render_categoria(categoria_id: str) -> str:
 
 
 def obtener_categoria_por_portal(portal: str) -> str:
-    """Devuelve la categoria principal segun el portal del tramite."""
+    """Mapea el portal ('SAT' o 'RENAP') a su categoria principal.
+    
+    Se usa para saber a donde ir al hacer 'Regresar' desde un tramite.
+    """
     if portal == "SAT":
         return "sat"
     return "renap"
 
 
 def render_tramite(tramite_id: str, paso_actual: int = 1) -> str:
-    """Pagina de detalle de un tramite mostrando un paso a la vez."""
+    """Muestra un paso especifico de un tramite.
+    
+    DIFERENCIA CON ESCRITORIO:
+    - En escritorio: todos los pasos se cargan en memoria y cambias con botones
+    - En web: cada paso es una URL diferente (?paso=N)
+    
+    Muestra:
+    - Barra de progreso con porcentaje
+    - Titulo y descripcion del paso
+    - Lista de items/instrucciones
+    - Enlace oficial si existe
+    - Botones para ir al paso anterior/siguiente
+    - Siempre muestra los requisitos (documentos indispensables)
+    """
     tramite = TRAMITES.get(tramite_id)
     if tramite is None:
         return render_layout("No encontrado", '<a class="button back" href="/">Volver</a><div class="panel"><h3>No encontrado</h3></div>')
@@ -374,39 +441,78 @@ def render_tramite(tramite_id: str, paso_actual: int = 1) -> str:
     )
 
 
+# ========== SERVIDOR HTTP ==========
+
 class WanbeHandler(BaseHTTPRequestHandler):
-    """Manejador HTTP de la vista web."""
+    """Manejador HTTP que procesa las solicitudes del navegador.
+    
+    TEMA DE PROGRAMACION: Arquitectura cliente-servidor
+    - El navegador hace GET /ruta
+    - Este handler recibe la solicitud y decide que renderizar
+    - Retorna HTML para que el navegador lo muestre
+    
+    Rutas soportadas:
+    - GET /  -> render_inicio (pantalla principal)
+    - GET /categoria/{id}  -> render_categoria
+    - GET /tramite/{id}?paso=N  -> render_tramite
+    - GET /assets/logo.png  -> imagen (binario)
+    """
 
     def do_GET(self) -> None:
+        """Maneja las solicitudes GET del navegador.
+        
+        Pasos:
+        1. Parsear la URL (path y query string)
+        2. Determinar que recurso se solicita
+        3. Renderizar HTML o servir archivo (asset)
+        4. Enviar respuesta HTTP
+        """
         parsed = urlparse(self.path)
         path = unquote(parsed.path)
 
+        # Servir imagen del logo
         if path == "/assets/logo.png":
             self.send_asset("logo.png", "image/png")
             return
 
+        # Ruta raiz: pantalla principal
         if path == "/":
+            # Extraer parametro 'q' de la URL (?q=busqueda)
             query = parse_qs(parsed.query).get("q", [""])[0].strip()
             self.send_html(render_inicio(query))
             return
 
+        # Ruta de categoria: /categoria/sat o /categoria/renap
         if path.startswith("/categoria/"):
-            self.send_html(render_categoria(path.removeprefix("/categoria/")))
+            categoria_id = path.removeprefix("/categoria/")
+            self.send_html(render_categoria(categoria_id))
             return
 
+        # Ruta de tramite: /tramite/calcomania?paso=2
         if path.startswith("/tramite/"):
-            paso = parse_qs(parsed.query).get("paso", ["1"])[0]
+            # Extraer numero del paso (?paso=1, ?paso=2, etc)
+            tramite_id = path.removeprefix("/tramite/")
+            paso_str = parse_qs(parsed.query).get("paso", ["1"])[0]
             try:
-                paso_actual = int(paso)
+                paso_actual = int(paso_str)
             except ValueError:
-                paso_actual = 1
-            self.send_html(render_tramite(path.removeprefix("/tramite/"), paso_actual))
+                paso_actual = 1  # Por defecto: paso 1
+            self.send_html(render_tramite(tramite_id, paso_actual))
             return
 
+        # Si ninguna ruta coincide: error 404 (no encontrado)
         self.send_response(404)
         self.end_headers()
 
     def send_html(self, html: str) -> None:
+        """Envia una respuesta HTTP con contenido HTML al navegador.
+        
+        Pasos:
+        1. Codificar el string HTML a bytes (UTF-8)
+        2. Enviar header HTTP 200 (OK)
+        3. Indicar que es HTML con charset UTF-8
+        4. Enviar el cuerpo de la respuesta
+        """
         encoded = html.encode("utf-8")
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -415,12 +521,19 @@ class WanbeHandler(BaseHTTPRequestHandler):
         self.wfile.write(encoded)
 
     def send_asset(self, filename: str, content_type: str) -> None:
+        """Sirve archivos binarios (imagenes) desde la carpeta assets.
+        
+        Diferente a send_html porque:
+        - Carga datos binarios (no es texto)
+        - Usa Content-Type especifico (image/png, etc)
+        - Si el archivo no existe, retorna 404
+        """
         path = BASE_DIR / "assets" / filename
         if not path.exists():
             self.send_response(404)
             self.end_headers()
             return
-        data = path.read_bytes()
+        data = path.read_bytes()  # Leer el archivo binario
         self.send_response(200)
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(data)))
@@ -429,12 +542,26 @@ class WanbeHandler(BaseHTTPRequestHandler):
 
 
 def run_server(port: int = DEFAULT_PORT) -> None:
-    """Inicia el servidor web local."""
+    """Inicia el servidor web local.
+    
+    TEMA: Servidores web
+    - ThreadingHTTPServer: crea un servidor que maneja multiples conexiones
+    - (HOST, port): donde escucha (localhost:8000)
+    - WanbeHandler: clase que procesa las solicitudes
+    - serve_forever(): bloquea y espera conexiones indefinidamente
+    
+    Para cerrar: Ctrl+C en la terminal
+    """
     server = ThreadingHTTPServer((HOST, port), WanbeHandler)
     print(f"Wanbe web disponible en http://{HOST}:{port}")
+    print("Presiona Ctrl+C para detener el servidor.")
     server.serve_forever()
 
 
+# ========== PUNTO DE ENTRADA ==========
+
 if __name__ == "__main__":
+    # Permite usar: python vista_web.py 9000
+    # Para correr el servidor en puerto 9000 en lugar del 8000 por defecto
     selected_port = int(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_PORT
     run_server(selected_port)
