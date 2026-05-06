@@ -41,9 +41,8 @@ COLORS = {
 
 # Matriz: cada fila representa una ruta general de navegacion.
 RUTAS = [
-    ["Inicio", "SAT", "Vehiculos", "Pago de Calcomania"],
+    ["Inicio", "SAT", "Vehiculos", "Pago de Calcomanía"],
     ["Inicio", "SAT", "Individuales", "Solicitud de NIT"],
-    ["Inicio", "SAT", "Juridicos", "Habilitacion de Libros"],
     ["Inicio", "RENAP", "Tramite de DPI"],
     ["Inicio", "RENAP", "Certificados en Linea"],
 ]
@@ -52,7 +51,7 @@ RUTAS = [
 # Diccionario principal de tramites.
 TRAMITES = {
     "calcomania": {
-        "titulo": "Pago de Calcomania",
+        "titulo": "Pago de Calcomanía",
         "portal": "SAT",
         "icono": "CAR",
         "descripcion": "Pago del Impuesto Sobre Circulacion de Vehiculos.",
@@ -75,7 +74,7 @@ TRAMITES = {
                 "items": ["Verifica el monto.", "Paga en linea o ventanilla.", "Guarda recibo."],
             },
             {
-                "titulo": "Imprime calcomania",
+                "titulo": "Imprime calcomanía",
                 "texto": "Descarga el distintivo en PDF para portarlo en tu vehiculo.",
                 "items": ["Revisa que la placa sea correcta.", "Imprime o guarda el PDF."],
                 "enlace": "https://portal.sat.gob.gt/portal/impresion-calcomania/",
@@ -114,31 +113,6 @@ TRAMITES = {
                 "titulo": "Enviar solicitud",
                 "texto": "Revisa toda la informacion antes de finalizar.",
                 "items": ["Confirma datos.", "Guarda usuario y clave.", "Espera respuesta por correo."],
-            },
-        ],
-    },
-    "libros": {
-        "titulo": "Habilitacion de Libros",
-        "portal": "SAT",
-        "icono": "LIB",
-        "descripcion": "Formulario SAT-7121 para libros contables.",
-        "requisitos": ["NIT", "Clave SAT", "Boleta SAT-2000 si aplica"],
-        "pasos": [
-            {
-                "titulo": "Abrir Declaraguate",
-                "texto": "Busca el formulario SAT-7121 en la seccion Varios.",
-                "items": ["Selecciona habilitacion de libros.", "Ingresa datos del contribuyente."],
-                "enlace": "https://declaraguate.sat.gob.gt/declaraguate-web/",
-            },
-            {
-                "titulo": "Configurar libros",
-                "texto": "Selecciona tipo de libro y modalidad.",
-                "items": ["Manual o computarizado.", "Cantidad de libros.", "Establecimiento si aplica."],
-            },
-            {
-                "titulo": "Pagar y resolver",
-                "texto": "Congela, paga SAT-2000 e imprime resolucion.",
-                "items": ["Guarda boleta.", "Imprime resolucion.", "Archiva documentos."],
             },
         ],
     },
@@ -205,13 +179,13 @@ MENU = [
     {
         "id": "sat",
         "titulo": "Portal SAT",
-        "subtitulo": "Vehiculos, NIT y empresas",
+        "subtitulo": "Vehiculos y NIT",
         "icono": "SAT",
         "hijos": [
             {
                 "id": "vehiculos",
                 "titulo": "Vehiculos",
-                "subtitulo": "Calcomania y placas",
+                "subtitulo": "Calcomanía y placas",
                 "icono": "CAR",
                 "hijos": [{"tramite": "calcomania"}],
             },
@@ -221,13 +195,6 @@ MENU = [
                 "subtitulo": "NIT personal",
                 "icono": "NIT",
                 "hijos": [{"tramite": "nit"}],
-            },
-            {
-                "id": "juridicos",
-                "titulo": "Juridicos",
-                "subtitulo": "Empresas y libros",
-                "icono": "EMP",
-                "hijos": [{"tramite": "libros"}],
             },
         ],
     },
@@ -309,9 +276,14 @@ class WanbeApp:
         self.historial = ["inicio"]
         self.paso_actual = {clave: 0 for clave in TRAMITES}
         self.checklist_listo = {clave: False for clave in TRAMITES}
+        self.configuracion = {
+            "ventana_compacta": False,
+            "confirmar_finalizacion": True,
+        }
         self.imagenes = {}
 
         self.construir_base()
+        self.aplicar_configuracion()
         self.mostrar_inicio()
 
     def construir_base(self) -> None:
@@ -366,6 +338,17 @@ class WanbeApp:
             width=3,
             font=("Helvetica", 13, "bold"),
         ).pack(side="right", padx=12, pady=16)
+
+        tk.Button(
+            self.header,
+            text="Config",
+            command=self.mostrar_configuracion,
+            bg=COLORS["card"],
+            fg=COLORS["text"],
+            relief="flat",
+            font=("Helvetica", 10, "bold"),
+            padx=10,
+        ).pack(side="right", padx=(0, 6), pady=16)
 
         self.canvas = tk.Canvas(self.marco_app, bg=COLORS["white"], highlightthickness=0)
         self.canvas.pack(side="left", fill="both", expand=True)
@@ -789,9 +772,12 @@ class WanbeApp:
         self.mostrar_tramite(tramite_id, guardar=False)
 
     def finalizar(self, tramite_id: str) -> None:
+        if self.configuracion["confirmar_finalizacion"]:
+            respuesta = messagebox.askyesno("Wanbe", "Se completo la guia. Deseas volver al inicio?")
+            if not respuesta:
+                return
         self.checklist_listo[tramite_id] = False
         self.paso_actual[tramite_id] = 0
-        messagebox.showinfo("Wanbe", "Guia finalizada. Puedes volver al inicio.")
         self.historial = ["inicio"]
         self.mostrar_inicio(guardar=False)
 
@@ -805,6 +791,97 @@ class WanbeApp:
             "- Recursion en el buscador."
         )
         messagebox.showinfo("Acerca del proyecto", texto)
+
+    def aplicar_configuracion(self) -> None:
+        if self.configuracion["ventana_compacta"]:
+            self.root.geometry("390x620")
+        else:
+            self.root.geometry("430x720")
+
+    def mostrar_configuracion(self) -> None:
+        ventana = tk.Toplevel(self.root)
+        ventana.title("Configuracion")
+        ventana.transient(self.root)
+        ventana.grab_set()
+        ventana.configure(bg=COLORS["white"])
+        ventana.resizable(False, False)
+
+        tk.Label(
+            ventana,
+            text="Preferencias de la aplicacion",
+            bg=COLORS["white"],
+            fg=COLORS["primary"],
+            font=("Helvetica", 13, "bold"),
+        ).pack(anchor="w", padx=16, pady=(16, 6))
+
+        tk.Label(
+            ventana,
+            text="Activa o desactiva las opciones y guarda los cambios.",
+            bg=COLORS["white"],
+            fg=COLORS["muted"],
+            font=("Helvetica", 10),
+            wraplength=320,
+            justify="left",
+        ).pack(anchor="w", padx=16, pady=(0, 10))
+
+        ventana_compacta = tk.BooleanVar(value=self.configuracion["ventana_compacta"])
+        confirmar_finalizacion = tk.BooleanVar(value=self.configuracion["confirmar_finalizacion"])
+
+        tk.Checkbutton(
+            ventana,
+            text="Usar ventana compacta",
+            variable=ventana_compacta,
+            bg=COLORS["white"],
+            fg=COLORS["text"],
+            activebackground=COLORS["white"],
+            selectcolor=COLORS["white"],
+            font=("Helvetica", 10),
+        ).pack(anchor="w", padx=16, pady=4)
+
+        tk.Checkbutton(
+            ventana,
+            text="Confirmar al finalizar un tramite",
+            variable=confirmar_finalizacion,
+            bg=COLORS["white"],
+            fg=COLORS["text"],
+            activebackground=COLORS["white"],
+            selectcolor=COLORS["white"],
+            font=("Helvetica", 10),
+        ).pack(anchor="w", padx=16, pady=4)
+
+        botones = tk.Frame(ventana, bg=COLORS["white"])
+        botones.pack(fill="x", padx=16, pady=(14, 16))
+
+        def guardar() -> None:
+            self.configuracion["ventana_compacta"] = ventana_compacta.get()
+            self.configuracion["confirmar_finalizacion"] = confirmar_finalizacion.get()
+            self.aplicar_configuracion()
+            ventana.destroy()
+            messagebox.showinfo("Configuracion", "Cambios guardados correctamente.")
+
+        tk.Button(
+            botones,
+            text="Cancelar",
+            command=ventana.destroy,
+            bg=COLORS["card"],
+            fg=COLORS["text"],
+            relief="flat",
+            font=("Helvetica", 10, "bold"),
+            padx=12,
+            pady=8,
+        ).pack(side="left")
+
+        tk.Button(
+            botones,
+            text="Guardar",
+            command=guardar,
+            bg=COLORS["primary"],
+            fg="white",
+            relief="flat",
+            font=("Helvetica", 10, "bold"),
+            padx=12,
+            pady=8,
+        ).pack(side="right")
 
     def ejecutar(self) -> None:
         self.root.mainloop()
