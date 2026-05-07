@@ -602,7 +602,7 @@ class WanbeApp:
         hero.pack(fill="x", padx=18, pady=(14, 12))
         tk.Label(
             hero,
-            text="En que tramite te guiamos hoy?",
+            text="¿En qué trámite te guiamos hoy?",
             bg=COLORS["primary"],
             fg="white",
             font=("Helvetica", 19, "bold"),
@@ -610,16 +610,7 @@ class WanbeApp:
             anchor="w",
             wraplength=330,
         ).pack(fill="x", padx=16, pady=(20, 4))
-        tk.Label(
-            hero,
-            text="Guia visual sencilla para NIT, DPI y calcomanía.",
-            bg=COLORS["primary"],
-            fg="#dbeafe",
-            font=("Helvetica", 10),
-            justify="left",
-            anchor="w",
-            wraplength=330,
-        ).pack(fill="x", padx=16, pady=(0, 20))
+        
 
         busqueda = tk.Entry(self.contenido, font=("Helvetica", 12), relief="flat", bg=COLORS["card"], fg=COLORS["text"])
         busqueda.pack(fill="x", padx=18, pady=(0, 10), ipady=10)

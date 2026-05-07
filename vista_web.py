@@ -298,8 +298,7 @@ def render_inicio(query: str = "") -> str:
         "Inicio",
         f"""
 <section class="hero">
-  <h1>En que tramite te guiamos hoy?</h1>
-  <p>Guia visual sencilla para NIT, DPI y calcomanía.</p>
+  <h1>¿En qué trámite te guiamos hoy?</h1>
 </section>
 <form action="/" method="get">
   <input name="q" value="{escape(query)}" placeholder="Buscar tramite...">
