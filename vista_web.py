@@ -264,7 +264,7 @@ def render_inicio(query: str = "") -> str:
     """Pantalla principal del navegador.
     
     TEMA: Busqueda dinamica en la web
-    - Si query esta vacio: muestra SAT y RENAP
+  - Si query esta vacio: muestra las guias disponibles
     - Si query tiene texto: llama buscar_recursivo (igual que en escritorio)
     - Muestra un aviso cuando hay busqueda activa
     - Se llama desde WanbeHandler cuando hace GET /
@@ -299,7 +299,7 @@ def render_inicio(query: str = "") -> str:
         f"""
 <section class="hero">
   <h1>En que tramite te guiamos hoy?</h1>
-  <p>Guia visual sencilla para tramites de SAT y RENAP.</p>
+  <p>Guia visual sencilla para NIT, DPI y calcomanía.</p>
 </section>
 <form action="/" method="get">
   <input name="q" value="{escape(query)}" placeholder="Buscar tramite...">
@@ -307,8 +307,8 @@ def render_inicio(query: str = "") -> str:
 </form>
 {contexto_busqueda}
 <section class="section-title">
-  <h2>Categorias</h2>
-  <p>Selecciona el portal del tramite que deseas revisar.</p>
+  <h2>Guías disponibles</h2>
+  <p>Selecciona el tramite que deseas revisar.</p>
 </section>
 {tarjetas}
 """,

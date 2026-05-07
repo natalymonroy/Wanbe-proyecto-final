@@ -48,7 +48,6 @@ RUTAS = [
     ["Inicio", "SAT", "Vehiculos", "Pago de Calcomanía"],
     ["Inicio", "SAT", "Individuales", "Solicitud de NIT"],
     ["Inicio", "RENAP", "Tramite de DPI"],
-    ["Inicio", "RENAP", "Certificados en Linea"],
 ]
 
 # DICCIONARIO TRAMITES: Base de datos con todos los tramites disponibles
@@ -151,31 +150,6 @@ TRAMITES = {
             },
         ],
     },
-    "certificados": {
-        "titulo": "Certificados en Linea",
-        "portal": "RENAP",
-        "icono": "PDF",
-        "descripcion": "Solicitud de certificados desde ePortal RENAP.",
-        "requisitos": ["CUI", "Correo electronico", "Medio de pago"],
-        "pasos": [
-            {
-                "titulo": "Entrar al ePortal",
-                "texto": "Ingresa con tu CUI o crea usuario.",
-                "items": ["Usa correo personal.", "Crea una contrasena segura."],
-                "enlace": "https://eportal.renap.gob.gt/",
-            },
-            {
-                "titulo": "Elegir certificado",
-                "texto": "Selecciona el certificado que necesitas.",
-                "items": ["Nacimiento.", "Matrimonio.", "Otros disponibles."],
-            },
-            {
-                "titulo": "Pagar y descargar",
-                "texto": "Paga y guarda el PDF.",
-                "items": ["Costo aproximado: Q19.", "Verifica que el PDF abra bien."],
-            },
-        ],
-    },
 }
 
 # ESTRUCTURA JERARQUICA MENU: Arbol de navegacion con categorias y tramites
@@ -209,9 +183,9 @@ MENU = [
     {
         "id": "renap",
         "titulo": "Portal RENAP",
-        "subtitulo": "DPI y certificados",
+        "subtitulo": "Tramite de DPI",
         "icono": "DPI",
-        "hijos": [{"tramite": "dpi"}, {"tramite": "certificados"}],
+        "hijos": [{"tramite": "dpi"}],
     },
 ]
 
@@ -638,7 +612,7 @@ class WanbeApp:
         ).pack(fill="x", padx=16, pady=(20, 4))
         tk.Label(
             hero,
-            text="Guia visual sencilla para tramites de SAT y RENAP.",
+            text="Guia visual sencilla para NIT, DPI y calcomanía.",
             bg=COLORS["primary"],
             fg="#dbeafe",
             font=("Helvetica", 10),
@@ -941,7 +915,8 @@ class WanbeApp:
             "- Listas para requisitos y pasos.\n"
             "- Matrices para rutas de navegacion.\n"
             "- Diccionarios para tramites.\n"
-            "- Recursion en el buscador."
+            "- Recursion en el buscador.\n\n"
+            "Guías incluidas: NIT, DPI y calcomanía."
         )
         messagebox.showinfo("Acerca del proyecto", texto)
 

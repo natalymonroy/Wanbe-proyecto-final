@@ -10,6 +10,12 @@ La idea es conservar la base de la app Wanbe original, pero en una version mas s
 - Guia paso a paso con barra de progreso.
 - Enlaces a portales oficiales o de referencia.
 
+El proyecto se centra solo en tres guias:
+
+- NIT
+- DPI
+- Calcomania
+
 ## Temas de Python usados
 
 - Listas para requisitos y pasos.
