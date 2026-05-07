@@ -6,15 +6,15 @@ La idea es conservar la base de la app Wanbe original, pero en una version mas s
 
 - Pantalla de inicio con buscador.
 - Categorias SAT y RENAP.
-- Checklist de requisitos antes de iniciar cada tramite.
-- Guia paso a paso con barra de progreso.
+- Checklist de requisitos antes de iniciar cada trámite.
+- Guía paso a paso con barra de progreso.
 - Enlaces a portales oficiales o de referencia.
 
-El proyecto se centra solo en tres guias:
+El proyecto se centra solo en tres guías:
 
 - NIT
 - DPI
-- Calcomania
+- Calcomanía
 
 ## Temas de Python usados
 

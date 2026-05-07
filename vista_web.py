@@ -3,7 +3,7 @@
 Vista web local para Wanbe.
 
 Este archivo permite visualizar la app desde una URL local del navegador.
-La logica y los datos vienen de proyecto.py para mantener Python como base.
+La lógica y los datos vienen de proyecto.py para mantener Python como base.
 """
 
 from __future__ import annotations
@@ -16,9 +16,9 @@ import sys
 
 from proyecto import COLORS, MENU, TRAMITES, buscar_recursivo, encontrar_categoria
 
-# ========== CONFIGURACION DEL SERVIDOR ==========
-# Este archivo convierte la logica de proyecto.py en una interfaz web accesible desde el navegador
-# Se importan las funciones de busqueda y navegacion para reutilizar la misma logica
+# ========== CONFIGURACIÓN DEL SERVIDOR ==========
+# Este archivo convierte la lógica de proyecto.py en una interfaz web accesible desde el navegador
+# Se importan las funciones de búsqueda y navegación para reutilizar la misma lógica
 
 BASE_DIR = Path(__file__).resolve().parent  # Directorio del archivo actual
 HOST = "127.0.0.1"  # Localhost: solo accesible localmente
@@ -54,8 +54,8 @@ def render_layout(titulo: str, contenido: str) -> str:
     
     Contiene:
     - Variables CSS con los colores de COLORS (proyecto.py)
-    - Header con logo y titulo
-    - Main con el contenido dinamico
+    - Header con logo y título
+    - Main con el contenido dinámico
     - Estilos responsivos para móviles
     
     Nota: Los colores vienen directamente del diccionario COLORS
@@ -238,16 +238,16 @@ def render_card(titulo: str, subtitulo: str, icono: str, url: str, color: str = 
     """Genera una tarjeta visual reutilizable.
     
     Se usa para:
-    - Mostrar categorias en la pantalla de inicio
-    - Mostrar tramites dentro de una categoria
-    - Mostrar resultados de busqueda
+    - Mostrar categorías en la pantalla de inicio
+    - Mostrar trámites dentro de una categoría
+    - Mostrar resultados de búsqueda
     
-    Parametros:
-        titulo: nombre del item (ej: 'Pago de Calcomania')
-        subtitulo: descripcion breve (ej: 'Calcomania y placas')
-        icono: codigo corto (ej: 'CAR', 'DPI', 'PDF')
+    Parámetros:
+        titulo: nombre del item (ej: 'Pago de Calcomanía')
+        subtitulo: descripción breve (ej: 'Calcomanía y placas')
+        icono: código corto (ej: 'CAR', 'DPI', 'PDF')
         url: ruta para hacer clic (ej: '/tramite/calcomania')
-        color: color CSS del icono (por defecto: azul primario)
+        color: color CSS del ícono (por defecto: azul primario)
     """
     return f"""
 <a class="card" href="{escape(url)}">
@@ -263,10 +263,10 @@ def render_card(titulo: str, subtitulo: str, icono: str, url: str, color: str = 
 def render_inicio(query: str = "") -> str:
     """Pantalla principal del navegador.
     
-    TEMA: Busqueda dinamica en la web
-  - Si query esta vacio: muestra las guias disponibles
+    TEMA: Búsqueda dinámica en la web
+    - Si query está vacío: muestra las guías disponibles
     - Si query tiene texto: llama buscar_recursivo (igual que en escritorio)
-    - Muestra un aviso cuando hay busqueda activa
+    - Muestra un aviso cuando hay búsqueda activa
     - Se llama desde WanbeHandler cuando hace GET /
     """
     if query:
@@ -315,10 +315,10 @@ def render_inicio(query: str = "") -> str:
 
 
 def render_categoria(categoria_id: str) -> str:
-    """Muestra una categoria con sus tramites/subcategorias.
+    """Muestra una categoría con sus trámites/subcategorías.
     
     Se llama desde WanbeHandler cuando hace GET /categoria/{id}
-    Usa encontrar_categoria (recursivo) para buscar en el arbol MENU.
+    Usa encontrar_categoria (recursivo) para buscar en el árbol MENU.
     """
     categoria = encontrar_categoria(MENU, categoria_id)
     if categoria is None:
@@ -365,7 +365,7 @@ def obtener_categoria_por_portal(portal: str) -> str:
 
 
 def render_tramite(tramite_id: str, paso_actual: int = 1) -> str:
-    """Muestra un paso especifico de un tramite.
+    """Muestra un paso específico de un trámite.
     
     DIFERENCIA CON ESCRITORIO:
     - En escritorio: todos los pasos se cargan en memoria y cambias con botones
@@ -373,8 +373,8 @@ def render_tramite(tramite_id: str, paso_actual: int = 1) -> str:
     
     Muestra:
     - Barra de progreso con porcentaje
-    - Titulo y descripcion del paso
-    - Lista de items/instrucciones
+    - Título y descripción del paso
+    - Lista de ítems/instrucciones
     - Enlace oficial si existe
     - Botones para ir al paso anterior/siguiente
     - Siempre muestra los requisitos (documentos indispensables)
@@ -447,7 +447,7 @@ class WanbeHandler(BaseHTTPRequestHandler):
     
     TEMA DE PROGRAMACION: Arquitectura cliente-servidor
     - El navegador hace GET /ruta
-    - Este handler recibe la solicitud y decide que renderizar
+    - Este handler recibe la solicitud y decide qué renderizar
     - Retorna HTML para que el navegador lo muestre
     
     Rutas soportadas:
@@ -462,7 +462,7 @@ class WanbeHandler(BaseHTTPRequestHandler):
         
         Pasos:
         1. Parsear la URL (path y query string)
-        2. Determinar que recurso se solicita
+        2. Determinar qué recurso se solicita
         3. Renderizar HTML o servir archivo (asset)
         4. Enviar respuesta HTTP
         """
@@ -504,7 +504,7 @@ class WanbeHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def send_html(self, html: str) -> None:
-        """Envia una respuesta HTTP con contenido HTML al navegador.
+        """Envía una respuesta HTTP con contenido HTML al navegador.
         
         Pasos:
         1. Codificar el string HTML a bytes (UTF-8)
@@ -520,11 +520,11 @@ class WanbeHandler(BaseHTTPRequestHandler):
         self.wfile.write(encoded)
 
     def send_asset(self, filename: str, content_type: str) -> None:
-        """Sirve archivos binarios (imagenes) desde la carpeta assets.
+        """Sirve archivos binarios (imágenes) desde la carpeta assets.
         
         Diferente a send_html porque:
         - Carga datos binarios (no es texto)
-        - Usa Content-Type especifico (image/png, etc)
+        - Usa Content-Type específíco (image/png, etc)
         - Si el archivo no existe, retorna 404
         """
         path = BASE_DIR / "assets" / filename
@@ -544,7 +544,7 @@ def run_server(port: int = DEFAULT_PORT) -> None:
     """Inicia el servidor web local.
     
     TEMA: Servidores web
-    - ThreadingHTTPServer: crea un servidor que maneja multiples conexiones
+    - ThreadingHTTPServer: crea un servidor que maneja múltiples conexiones
     - (HOST, port): donde escucha (localhost:8000)
     - WanbeHandler: clase que procesa las solicitudes
     - serve_forever(): bloquea y espera conexiones indefinidamente
