@@ -365,6 +365,101 @@ def obtener_categoria_por_portal(portal: str) -> str:
     return "renap"
 
 
+def render_tramite_resumen(tramite_id: str) -> str:
+    """Muestra el resumen final con proximos pasos, renovacion, contacto y casos especiales.
+    
+    Esta pantalla se muestra despues de completar todos los pasos del tramite.
+    Incluye:
+    - Confirmacion de finalizacion
+    - Proximos pasos a seguir
+    - Informacion de renovacion
+    - Datos de contacto SAT
+    - Casos especiales
+    """
+    tramite = TRAMITES.get(tramite_id)
+    if tramite is None:
+        return render_layout("No encontrado", '<a class="button back" href="/">Volver</a><div class="panel"><h3>No encontrado</h3></div>')
+
+    contenido_html = f"""
+<a class="button back" href="/">Volver</a>
+<section class="section-title">
+  <h2>✓ Guía completada: {escape(tramite["titulo"])}</h2>
+  <p>Has terminado todos los pasos de esta guía.</p>
+</section>
+"""
+
+    # Proximos pasos
+    if tramite.get("proximos_pasos"):
+        proximos = "<br>".join(f"→ {escape(paso)}" for paso in tramite["proximos_pasos"])
+        contenido_html += f"""
+<article class="panel">
+  <h3>Próximos pasos</h3>
+  <p>{proximos}</p>
+</article>
+"""
+
+    # Renovacion
+    if tramite.get("renovacion"):
+        renovacion = tramite["renovacion"]
+        renovacion_html = ""
+        if renovacion.get("frecuencia"):
+            renovacion_html += f"<p><strong>Frecuencia:</strong> {escape(renovacion['frecuencia'])}</p>"
+        if renovacion.get("proceso"):
+            renovacion_html += f"<p><strong>Proceso:</strong> {escape(renovacion['proceso'])}</p>"
+        if renovacion.get("alertas"):
+            renovacion_html += f"<p><strong>Alertas:</strong> {escape(renovacion['alertas'])}</p>"
+        
+        if renovacion_html:
+            contenido_html += f"""
+<article class="panel" style="background: #fff7ed; border-left: 4px solid #92400e;">
+  <h3>📅 Renovación</h3>
+  {renovacion_html}
+</article>
+"""
+
+    # Contacto SAT
+    if tramite.get("contacto_sat"):
+        contacto = tramite["contacto_sat"]
+        contacto_html = ""
+        if contacto.get("telefono"):
+            contacto_html += f"<p><strong>Teléfono:</strong> {escape(contacto['telefono'])}</p>"
+        if contacto.get("horario"):
+            contacto_html += f"<p><strong>Horario:</strong> {escape(contacto['horario'])}</p>"
+        if contacto.get("email"):
+            contacto_html += f"<p><strong>Email:</strong> {escape(contacto['email'])}</p>"
+        
+        if contacto_html:
+            contenido_html += f"""
+<article class="panel">
+  <h3>📞 Contacto SAT</h3>
+  {contacto_html}
+</article>
+"""
+
+    # Casos especiales
+    if tramite.get("casos_especiales"):
+        casos = tramite["casos_especiales"]
+        casos_html = ""
+        for caso, descripcion in casos.items():
+            casos_html += f"<p><strong>• {escape(caso)}:</strong> {escape(descripcion)}</p>"
+        
+        if casos_html:
+            contenido_html += f"""
+<article class="panel" style="background: #f8fafc; border-left: 4px solid #5C1399;">
+  <h3>⚙ Casos especiales</h3>
+  {casos_html}
+</article>
+"""
+
+    contenido_html += """
+<nav class="step-nav">
+  <a class="button secondary" href="/">Volver al inicio</a>
+</nav>
+"""
+
+    return render_layout(tramite["titulo"], contenido_html)
+
+
 def render_tramite(tramite_id: str, paso_actual: int = 1) -> str:
     """Muestra un paso especifico de un tramite.
     
@@ -373,12 +468,14 @@ def render_tramite(tramite_id: str, paso_actual: int = 1) -> str:
     - En web: cada paso es una URL diferente (?paso=N)
     
     Muestra:
+    - Información del tramite (tiempo, costo, vigencia)
     - Barra de progreso con porcentaje
     - Titulo y descripcion del paso
+    - Tiempo estimado y errores comunes del paso
     - Lista de items/instrucciones
     - Enlace oficial si existe
     - Botones para ir al paso anterior/siguiente
-    - Siempre muestra los requisitos (documentos indispensables)
+    - Al final: proximos pasos, renovacion, contacto y casos especiales
     """
     tramite = TRAMITES.get(tramite_id)
     if tramite is None:
@@ -395,18 +492,32 @@ def render_tramite(tramite_id: str, paso_actual: int = 1) -> str:
     if paso.get("enlace"):
         enlace = f'<a class="button" href="{escape(paso["enlace"])}" target="_blank" rel="noopener">Abrir enlace oficial</a>'
 
+    # Mostrar tiempo y errores comunes del paso
+    tiempo_paso = ""
+    if paso.get("tiempo"):
+        tiempo_paso = f'<p style="color: #7886C7; font-weight: bold;">⏱ Tiempo: {escape(paso["tiempo"])}</p>'
+    
+    errores_paso = ""
+    if paso.get("errores_comunes"):
+        errores_paso = f'''<div class="panel warning">
+    <h4>⚠ Errores comunes</h4>
+    <p>{escape(paso["errores_comunes"])}</p>
+</div>'''
+
     categoria_url = crear_ruta(obtener_categoria_por_portal(tramite["portal"]))
     regresar_url = (
         f"{crear_ruta_tramite(tramite_id)}?paso={paso_actual - 1}"
         if paso_actual > 1
         else categoria_url
     )
-    continuar_url = (
-        f"{crear_ruta_tramite(tramite_id)}?paso={paso_actual + 1}"
-        if paso_actual < total_pasos
-        else "/"
-    )
-    continuar_texto = "Continuar" if paso_actual < total_pasos else "Finalizar"
+    
+    # Si es el último paso, la URL de continuar es a un resumen final
+    if paso_actual < total_pasos:
+        continuar_url = f"{crear_ruta_tramite(tramite_id)}?paso={paso_actual + 1}"
+        continuar_texto = "Continuar"
+    else:
+        continuar_url = f"{crear_ruta_tramite(tramite_id)}?resumen=1"
+        continuar_texto = "Ver resumen final"
 
     paso_html = f"""
 <article class="panel step">
@@ -415,14 +526,30 @@ def render_tramite(tramite_id: str, paso_actual: int = 1) -> str:
     <span style="width:{progreso}%"></span>
   </div>
   <h3>{escape(paso["titulo"])}</h3>
+  {tiempo_paso}
   <p>{escape(paso["texto"])}</p>
   <ul>{items}</ul>
+  {errores_paso}
   {enlace}
 </article>
 <nav class="step-nav" aria-label="Navegacion de pasos">
   <a class="button secondary" href="{escape(regresar_url)}">Regresar</a>
   <a class="button" href="{escape(continuar_url)}">{continuar_texto}</a>
 </nav>"""
+
+    # Información general del tramite
+    info_tramite = ""
+    info_items = []
+    if tramite.get("tiempo_estimado"):
+        info_items.append(f"⏱ Tiempo total: {escape(tramite['tiempo_estimado'])}")
+    if tramite.get("costo"):
+        info_items.append(f"💰 Costo: {escape(tramite['costo'])}")
+    if tramite.get("vigencia"):
+        info_items.append(f"📅 Vigencia: {escape(tramite['vigencia'])}")
+    
+    if info_items:
+        info_html = "<br>".join(info_items)
+        info_tramite = f'<div class="panel info" style="background: #f0f5ff; border-left: 4px solid #183499;"><p>{info_html}</p></div>'
 
     return render_layout(
         tramite["titulo"],
@@ -432,6 +559,7 @@ def render_tramite(tramite_id: str, paso_actual: int = 1) -> str:
   <h2>{escape(tramite["titulo"])}</h2>
   <p>{escape(tramite["descripcion"])}</p>
 </section>
+{info_tramite}
 <section class="panel requirements">
   <h3>Documentos indispensables</h3>
   <ul>{requisitos}</ul>
@@ -492,6 +620,13 @@ class WanbeHandler(BaseHTTPRequestHandler):
         if path.startswith("/tramite/"):
             # Extraer numero del paso (?paso=1, ?paso=2, etc)
             tramite_id = path.removeprefix("/tramite/")
+            
+            # Verificar si se solicita el resumen final
+            resumen = parse_qs(parsed.query).get("resumen", ["0"])[0]
+            if resumen == "1":
+                self.send_html(render_tramite_resumen(tramite_id))
+                return
+            
             paso_str = parse_qs(parsed.query).get("paso", ["1"])[0]
             try:
                 paso_actual = int(paso_str)
