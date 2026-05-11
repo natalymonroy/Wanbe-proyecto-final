@@ -6,9 +6,9 @@ Aplicacion de escritorio sencilla inspirada en la app web original.
 Usa tkinter, por lo que no necesita instalar librerias externas.
 
 Temas de programacion aplicados:
-- Listas: pasos y requisitos de cada tramite.
+- Listas: pasos y requisitos de cada trámite.
 - Matrices: rutas principales de la aplicacion.
-- Diccionarios: base de datos de tramites.
+- Diccionarios: base de datos de trámites.
 - Recursion: buscador dentro del arbol de categorias.
 """
 
@@ -42,25 +42,24 @@ COLORS = {
 }
 
 # MATRIZ RUTAS: Estructura que muestra los caminos de navegacion en la app
-# Cada fila es una ruta del inicio hasta un tramite especifico
-# Ejemplo: [Inicio, SAT, Vehiculos, Pago de Calcomania] muestra la navegacion completa
+# Cada fila es una ruta del inicio hasta un trámite específico
+# Ejemplo: [Inicio, SAT, Vehículos, Pago de Calcomanía] muestra la navegación completa
 RUTAS = [
-    ["Inicio", "SAT", "Vehiculos", "Pago de Calcomanía"],
+    ["Inicio", "SAT", "Vehículos", "Pago de Calcomanía"],
     ["Inicio", "SAT", "Individuales", "Solicitud de NIT"],
-    ["Inicio", "RENAP", "Tramite de DPI"],
-    ["Inicio", "RENAP", "Certificados en Linea"],
+    ["Inicio", "RENAP", "Trámite de DPI"],
 ]
 
-# DICCIONARIO TRAMITES: Base de datos con todos los tramites disponibles
-# Cada tramite contiene: titulo, portal, icono, descripcion, requisitos y pasos
-# Los "pasos" tienen: titulo, texto, items (lista de instrucciones) y enlace opcional
+# DICCIONARIO TRAMITES: Base de datos con todos los trámites disponibles
+# Cada trámite contiene: título, portal, ícono, descripción, requisitos y pasos
+# Los "pasos" tienen: título, texto, items (lista de instrucciones) y enlace opcional
 TRAMITES = {
     "calcomania": {
         "titulo": "Pago de Calcomanía",
         "portal": "SAT",
         "icono": "CAR",
-        "descripcion": "Pago del Impuesto Sobre Circulacion de Vehiculos.",
-        "requisitos": ["Placa del vehiculo", "NIT del propietario"],
+        "descripcion": "Pago del Impuesto Sobre Circulación de Vehículos.",
+        "requisitos": ["Placa del vehículo", "NIT del propietario"],
         "pasos": [
             {
                 "titulo": "Revisa datos del vehiculo",
@@ -69,14 +68,14 @@ TRAMITES = {
             },
             {
                 "titulo": "Genera formulario SAT-4091",
-                "texto": "Ingresa a Declaraguate y genera el formulario de vehiculos.",
-                "items": ["Busca la seccion Vehiculos.", "Ingresa NIT y placa.", "Valida y congela."],
+                "texto": "Ingresa a Declaraguate y genera el formulario de vehículos.",
+                "items": ["Busca la sección Vehículos.", "Ingresa NIT y placa.", "Valida y congela."],
                 "enlace": "https://declaraguate.sat.gob.gt/declaraguate-web/",
             },
             {
                 "titulo": "Paga en banco",
-                "texto": "Usa el numero de formulario y numero de acceso.",
-                "items": ["Verifica el monto.", "Paga en linea o ventanilla.", "Guarda recibo."],
+                "texto": "Usa el número de formulario y número de acceso.",
+                "items": ["Verifica el monto.", "Paga en línea o ventanilla.", "Guarda recibo."],
             },
             {
                 "titulo": "Imprime calcomanía",
@@ -90,6 +89,15 @@ TRAMITES = {
         "titulo": "Solicitud de NIT",
         "portal": "SAT",
         "icono": "NIT",
+<<<<<<< main
+        "descripcion": "Solicitud electrónica para obtener NIT por primera vez.",
+        "requisitos": ["DPI vigente", "Recibo de luz o agua", "Correo electrónico"],
+        "pasos": [
+            {
+                "titulo": "Abre portal SAT",
+                "texto": "Inicia en el portal oficial de Solicitud Electrónica de NIT.",
+                "items": ["Completa captcha.", "Escribe tu correo.", "Solicita el enlace."],
+=======
         "descripcion": "Solicitud electronica para obtener NIT por primera vez.",
         "tiempo_estimado": "30-45 minutos",
         "costo": "Gratuito",
@@ -110,6 +118,7 @@ TRAMITES = {
                     "Solicita el enlace.",
                     "CONSEJO: Usa un correo personal que revises frecuentemente.",
                 ],
+>>>>>>> main
                 "enlace": "https://portal.sat.gob.gt/portal/solicitud-electronica-de-nit/",
                 "tiempo": "~5 minutos",
                 "errores_comunes": "Captcha incorrecto o correo invalido.",
@@ -117,6 +126,14 @@ TRAMITES = {
             {
                 "titulo": "Valida correo",
                 "texto": "Busca en tu correo el mensaje enviado por SAT.",
+<<<<<<< main
+                "items": ["Revisa bandeja principal.", "Revisa spam.", "Copia el código recibido."],
+            },
+            {
+                "titulo": "Datos personales",
+                "texto": "Llena DPI, número de serie y datos solicitados.",
+                "items": ["El número de serie está atrás del DPI.", "Sube documentos legibles."],
+=======
                 "items": [
                     "Revisa bandeja principal.",
                     "Revisa spam y carpeta promocional.",
@@ -141,9 +158,10 @@ TRAMITES = {
                 ],
                 "tiempo": "~10 minutos",
                 "errores_comunes": "Numero de serie incorrecto, comprobante muy antiguo o documentos borrosos.",
+>>>>>>> main
             },
             {
-                "titulo": "Actividad economica",
+                "titulo": "Actividad económica",
                 "texto": "Elige si eres asalariado, no tienes obligaciones o tienes negocio.",
                 "items": [
                     "Sin obligaciones: si solo trabajas por cuenta propia.",
@@ -157,6 +175,10 @@ TRAMITES = {
             },
             {
                 "titulo": "Enviar solicitud",
+<<<<<<< main
+                "texto": "Revisa toda la información antes de finalizar.",
+                "items": ["Confirma datos.", "Guarda usuario y clave.", "Espera respuesta por correo."],
+=======
                 "texto": "Revisa toda la informacion antes de finalizar.",
                 "items": [
                     "Confirma todos los datos ingresados.",
@@ -169,6 +191,7 @@ TRAMITES = {
                 ],
                 "tiempo": "~5 minutos",
                 "errores_comunes": "Contrasena debil o olvidar guardar usuario y datos de la solicitud.",
+>>>>>>> main
             },
         ],
         "proximos_pasos": [
@@ -199,22 +222,22 @@ TRAMITES = {
         },
     },
     "dpi": {
-        "titulo": "Tramite de DPI",
+        "titulo": "Trámite de DPI",
         "portal": "RENAP",
         "icono": "DPI",
-        "descripcion": "Guia basica para tramitar el Documento Personal de Identificacion.",
+        "descripcion": "Guía básica para tramitar el Documento Personal de Identificación.",
         "requisitos": ["Certificado de nacimiento", "Boleto de ornato"],
         "pasos": [
             {
                 "titulo": "Certificado de nacimiento",
                 "texto": "Solicita un certificado reciente en RENAP o ePortal.",
-                "items": ["Presencial: Q15.", "En linea: Q19.", "Debe estar vigente."],
+                "items": ["Presencial: Q15.", "En línea: Q19.", "Debe estar vigente."],
                 "enlace": "https://eportal.renap.gob.gt/",
             },
             {
                 "titulo": "Pago en banco",
                 "texto": "Paga la tarifa del DPI.",
-                "items": ["Costo usual: Q100.", "Mayores de 60 anos: gratuito."],
+                "items": ["Costo usual: Q100.", "Mayores de 60 años: gratuito."],
             },
             {
                 "titulo": "Visita RENAP",
@@ -228,48 +251,23 @@ TRAMITES = {
             },
         ],
     },
-    "certificados": {
-        "titulo": "Certificados en Linea",
-        "portal": "RENAP",
-        "icono": "PDF",
-        "descripcion": "Solicitud de certificados desde ePortal RENAP.",
-        "requisitos": ["CUI", "Correo electronico", "Medio de pago"],
-        "pasos": [
-            {
-                "titulo": "Entrar al ePortal",
-                "texto": "Ingresa con tu CUI o crea usuario.",
-                "items": ["Usa correo personal.", "Crea una contrasena segura."],
-                "enlace": "https://eportal.renap.gob.gt/",
-            },
-            {
-                "titulo": "Elegir certificado",
-                "texto": "Selecciona el certificado que necesitas.",
-                "items": ["Nacimiento.", "Matrimonio.", "Otros disponibles."],
-            },
-            {
-                "titulo": "Pagar y descargar",
-                "texto": "Paga y guarda el PDF.",
-                "items": ["Costo aproximado: Q19.", "Verifica que el PDF abra bien."],
-            },
-        ],
-    },
 }
 
-# ESTRUCTURA JERARQUICA MENU: Arbol de navegacion con categorias y tramites
+# ESTRUCTURA JERÁRQUICA MENU: Árbol de navegación con categorías y trámites
 # Es una estructura anidada que permite:
-# - Navegar por categorias (SAT, RENAP, subcategorias)
-# - Acceder a tramites especificos
-# - Usar recursion para buscar en toda la estructura
+# - Navegar por categorías (SAT, RENAP, subcategorías)
+# - Acceder a trámites específicos
+# - Usar recursión para buscar en toda la estructura
 MENU = [
     {
         "id": "sat",
         "titulo": "Portal SAT",
-        "subtitulo": "Vehiculos y NIT",
+        "subtitulo": "Vehículos y NIT",
         "icono": "SAT",
         "hijos": [
             {
                 "id": "vehiculos",
-                "titulo": "Vehiculos",
+                "titulo": "Vehículos",
                 "subtitulo": "Calcomanía y placas",
                 "icono": "CAR",
                 "hijos": [{"tramite": "calcomania"}],
@@ -286,9 +284,9 @@ MENU = [
     {
         "id": "renap",
         "titulo": "Portal RENAP",
-        "subtitulo": "DPI y certificados",
+        "subtitulo": "Trámite de DPI",
         "icono": "DPI",
-        "hijos": [{"tramite": "dpi"}, {"tramite": "certificados"}],
+        "hijos": [{"tramite": "dpi"}],
     },
 ]
 
@@ -296,26 +294,26 @@ MENU = [
 # ========== FUNCIONES DE BUSQUEDA Y UTILIDAD ==========
 
 def normalizar(texto: str) -> str:
-    """Convierte texto a minusculas y elimina tildes para mejorar busquedas.
+    """Convierte texto a minúsculas y elimina tildes para mejorar búsquedas.
     
     Ejemplo: 'PAGO de Calcomanía' -> 'pago de calcomania'
-    Esto permite que busquedas sin tildes encuentren resultados exactos.
-    Usa el modulo 'unicodedata' para descomponer caracteres acentuados.
+    Esto permite que búsquedas sin tildes encuentren resultados exactos.
+    Usa el módulo 'unicodedata' para descomponer caracteres acentuados.
     """
     texto = unicodedata.normalize("NFD", texto.lower())
     return "".join(letra for letra in texto if unicodedata.category(letra) != "Mn")
 
 
 def puntuar_coincidencia(texto: str, consulta: str) -> int:
-    """Asigna prioridad (1-3) a coincidencias segun su relevancia.
+    """Asigna prioridad (1-3) a coincidencias según su relevancia.
     
     Retorna:
-        3 si la consulta esta al inicio del texto (maxima prioridad)
-        2 si la consulta esta al inicio de alguna palabra
-        1 si la consulta esta dentro del texto (prioridad baja)
+        3 si la consulta está al inicio del texto (máxima prioridad)
+        2 si la consulta está al inicio de alguna palabra
+        1 si la consulta está dentro del texto (prioridad baja)
        -1 si no hay coincidencia
     
-    Esto ordena los resultados de busqueda de forma inteligente.
+    Esto ordena los resultados de búsqueda de forma inteligente.
     """
     texto_normalizado = normalizar(texto)
     consulta_normalizada = normalizar(consulta)
@@ -333,16 +331,16 @@ def puntuar_coincidencia(texto: str, consulta: str) -> int:
 
 
 def buscar_recursivo(nodos: list[dict], consulta: str, ruta: str = "") -> list[dict]:
-    """Busca tramites y categorias en toda la estructura jerarquica usando RECURSION.
+    """Busca trámites y categorías en toda la estructura jerárquica usando RECURSIÓN.
     
-    TEMA DE PROGRAMACION: RECURSION
-    - Recorre el arbol MENU de forma profunda
-    - Busca coincidencias en titulo, descripcion y portal
-    - Se llama a si misma para explorar subcategorias
+    TEMA DE PROGRAMACION: RECURSIÓN
+    - Recorre el árbol MENU de forma profunda
+    - Busca coincidencias en título, descripción y portal
+    - Se llama a sí misma para explorar subcategorías
     
-    Parametros:
-        nodos: lista de nodos (categorias o tramites) a explorar
-        consulta: texto a buscar (ej: 'DPI', 'vehiculos')
+    Parámetros:
+        nodos: lista de nodos (categorías o trámites) a explorar
+        consulta: texto a buscar (ej: 'DPI', 'vehículos')
         ruta: camino desde el inicio (ej: 'Portal SAT > Individuales')
     
     Retorna: lista de resultados ordenados por relevancia
@@ -419,18 +417,18 @@ def encontrar_categoria(nodos: list[dict], categoria_id: str) -> dict | None:
 # ========== CLASE PRINCIPAL: APLICACION WANBE ==========
 
 class WanbeApp:
-    """Aplicacion de escritorio usando tkinter (libreria grafica de Python).
+    """Aplicación de escritorio usando tkinter (librería gráfica de Python).
     
     Responsabilidades:
     - Crear la ventana principal
-    - Manejar la navegacion entre pantallas
-    - Mostrar los tramites con sus pasos
+    - Manejar la navegación entre pantallas
+    - Mostrar los trámites con sus pasos
     - Gestionar el checklist de requisitos
     
-    TEMA DE PROGRAMACION: PROGRAMACION ORIENTADA A OBJETOS (OOP)
-    - Clase que encapsula toda la interfaz grafica
+    TEMA DE PROGRAMACION: PROGRAMACIÓN ORIENTADA A OBJETOS (OOP)
+    - Clase que encapsula toda la interfaz gráfica
     - Atributos (self.) para guardar estado
-    - Metodos para cada accion del usuario
+    - Métodos para cada acción del usuario
     """
     
     def __init__(self) -> None:
@@ -689,10 +687,10 @@ class WanbeApp:
         return boton
 
     def mostrar_inicio(self, guardar: bool = True) -> None:
-        """Muestra la pantalla principal con SAT y RENAP, y campo de busqueda.
+        """Muestra la pantalla principal con SAT y RENAP, y campo de búsqueda.
         
-        TEMA: Busqueda dinamica
-        - Implementa busqueda en tiempo real con buscar_recursivo
+        TEMA: Búsqueda dinámica
+        - Implementa búsqueda en tiempo real con buscar_recursivo
         - Usa KeyRelease para detectar cambios en el campo de texto
         - Prioriza resultados relevantes por coincidencia
         """
@@ -705,7 +703,7 @@ class WanbeApp:
         hero.pack(fill="x", padx=18, pady=(14, 12))
         tk.Label(
             hero,
-            text="En que tramite te guiamos hoy?",
+            text="¿En qué trámite te guiamos hoy?",
             bg=COLORS["primary"],
             fg="white",
             font=("Helvetica", 19, "bold"),
@@ -713,16 +711,7 @@ class WanbeApp:
             anchor="w",
             wraplength=330,
         ).pack(fill="x", padx=16, pady=(20, 4))
-        tk.Label(
-            hero,
-            text="Guia visual sencilla para tramites de SAT y RENAP.",
-            bg=COLORS["primary"],
-            fg="#dbeafe",
-            font=("Helvetica", 10),
-            justify="left",
-            anchor="w",
-            wraplength=330,
-        ).pack(fill="x", padx=16, pady=(0, 20))
+        
 
         busqueda = tk.Entry(self.contenido, font=("Helvetica", 12), relief="flat", bg=COLORS["card"], fg=COLORS["text"])
         busqueda.pack(fill="x", padx=18, pady=(0, 10), ipady=10)
@@ -788,9 +777,9 @@ class WanbeApp:
         tk.Label(caja, text=texto, bg=COLORS["card"], fg=COLORS["muted"], font=("Helvetica", 10), wraplength=320, justify="left").pack(anchor="w", padx=14, pady=(0, 14))
 
     def mostrar_categoria(self, categoria_id: str, guardar: bool = True) -> None:
-        """Muestra una categoria (SAT o RENAP) con sus tramites o subcategorias.
+        """Muestra una categoría (SAT o RENAP) con sus trámites o subcategorías.
         
-        Se usa cuando el usuario hace clic en una categoria del menu.
+        Se usa cuando el usuario hace clic en una categoría del menú.
         """
         if guardar:
             self.historial.append(categoria_id)  # Agregar al historial
@@ -813,9 +802,9 @@ class WanbeApp:
                 self.tarjeta(hijo["titulo"], hijo["subtitulo"], hijo["icono"], lambda h=hijo: self.cambiar_pantalla(h["id"]))
 
     def mostrar_tramite(self, tramite_id: str, guardar: bool = True) -> None:
-        """Muestra la pantalla de un tramite especifico.
+        """Muestra la pantalla de un trámite específico.
         
-        Muestra primero el CHECKLIST (si no lo completo), despues los PASOS.
+        Muestra primero el CHECKLIST (si no lo completó), después los PASOS.
         """
         if guardar:
             self.historial.append(tramite_id)  # Agregar al historial
@@ -831,10 +820,14 @@ class WanbeApp:
             self.mostrar_paso(tramite_id)
 
     def mostrar_checklist(self, tramite_id: str) -> None:
-        """Muestra una lista de verificacion (checklist) de requisitos.
+        """Muestra una lista de verificación (checklist) de requisitos.
         
+<<<<<<< main
+        El usuario debe marcar TODOS los requisitos para habilitar el botón "Ir al paso 1".
+=======
         El usuario debe marcar TODOS los requisitos para habilitar el boton "Ir al paso 1".
         Incluye informacion adicional como tiempo estimado, costo y vigencia.
+>>>>>>> main
         TEMA: LISTAS y variables de control en tkinter.
         """
         tramite = TRAMITES[tramite_id]
@@ -912,13 +905,17 @@ class WanbeApp:
         self.mostrar_tramite(tramite_id, guardar=False)
 
     def mostrar_paso(self, tramite_id: str) -> None:
-        """Muestra un paso especifico del tramite con barra de progreso.
+        """Muestra un paso específico del trámite con barra de progreso.
         
         Componentes:
         - Indicador de progreso (Paso X de Y)
         - Barra visual de progreso (rectángulo coloreado)
+<<<<<<< main
+        - Título, descripción e ítems del paso
+=======
         - Titulo, descripcion e items del paso
         - Tiempo estimado y errores comunes
+>>>>>>> main
         - Enlace oficial (si existe)
         - Botones Regresar y Continuar/Finalizar
         """
@@ -987,8 +984,8 @@ class WanbeApp:
     def navegacion_pasos(self, tramite_id: str) -> None:
         """Crea los botones Regresar y Continuar/Finalizar.
         
-        El boton Regresar se deshabilita si estamos en el primer paso.
-        El boton cambia a 'Finalizar' cuando se llega al ultimo paso.
+        El botón Regresar se deshabilita si estamos en el primer paso.
+        El botón cambia a 'Finalizar' cuando se llega al último paso.
         """
         barra = tk.Frame(self.contenido, bg=COLORS["white"])
         barra.pack(fill="x", padx=18, pady=(8, 20))
@@ -1029,8 +1026,12 @@ class WanbeApp:
     def finalizar(self, tramite_id: str) -> None:
         """Al terminar todos los pasos, muestra informacion final y pregunta si volver al inicio.
         
+<<<<<<< main
+        Se puede deshabilitar esta confirmación desde la configuración.
+=======
         Muestra: proximos pasos, renovacion, contacto y casos especiales.
         Se puede deshabilitar esta confirmacion desde la configuracion.
+>>>>>>> main
         """
         tramite = TRAMITES[tramite_id]
         self.limpiar()
@@ -1111,7 +1112,8 @@ class WanbeApp:
             "- Listas para requisitos y pasos.\n"
             "- Matrices para rutas de navegacion.\n"
             "- Diccionarios para tramites.\n"
-            "- Recursion en el buscador."
+            "- Recursion en el buscador.\n\n"
+            "Guías incluidas: NIT, DPI y calcomanía."
         )
         messagebox.showinfo("Acerca del proyecto", texto)
 
@@ -1122,11 +1124,11 @@ class WanbeApp:
             self.root.geometry("430x720")
 
     def mostrar_configuracion(self) -> None:
-        """Abre una ventana emergente (Toplevel) con opciones de configuracion.
+        """Abre una ventana emergente (Toplevel) con opciones de configuración.
         
         Permite:
         - Cambiar el tamaño de la ventana (compacta o normal)
-        - Habilitar/deshabilitar confirmacion al finalizar
+        - Habilitar/deshabilitar confirmación al finalizar
         """
         ventana = tk.Toplevel(self.root)  # Ventana emergente
         ventana.title("Configuracion")
