@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+P#!/usr/bin/env python3
 """
 Wanbe - Proyecto final en Python
 
@@ -89,6 +89,7 @@ TRAMITES = {
         "titulo": "Solicitud de NIT",
         "portal": "SAT",
         "icono": "NIT",
+<<<<<<< main
         "descripcion": "Solicitud electrónica para obtener NIT por primera vez.",
         "requisitos": ["DPI vigente", "Recibo de luz o agua", "Correo electrónico"],
         "pasos": [
@@ -96,29 +97,129 @@ TRAMITES = {
                 "titulo": "Abre portal SAT",
                 "texto": "Inicia en el portal oficial de Solicitud Electrónica de NIT.",
                 "items": ["Completa captcha.", "Escribe tu correo.", "Solicita el enlace."],
+=======
+        "descripcion": "Solicitud electronica para obtener NIT por primera vez.",
+        "tiempo_estimado": "30-45 minutos",
+        "costo": "Gratuito",
+        "vigencia": "Indefinida (renovacion cada 5 anos)",
+        "requisitos": [
+            "DPI vigente",
+            "Recibo de luz, agua o telefono",
+            "Correo electronico activo",
+            "Numero de serie del DPI (atras del carnet)",
+        ],
+        "pasos": [
+            {
+                "titulo": "Abre portal SAT",
+                "texto": "Inicia en el portal oficial de Solicitud Electronica de NIT.",
+                "items": [
+                    "Completa captcha.",
+                    "Escribe tu correo valido.",
+                    "Solicita el enlace.",
+                    "CONSEJO: Usa un correo personal que revises frecuentemente.",
+                ],
+>>>>>>> main
                 "enlace": "https://portal.sat.gob.gt/portal/solicitud-electronica-de-nit/",
+                "tiempo": "~5 minutos",
+                "errores_comunes": "Captcha incorrecto o correo invalido.",
             },
             {
                 "titulo": "Valida correo",
                 "texto": "Busca en tu correo el mensaje enviado por SAT.",
+<<<<<<< main
                 "items": ["Revisa bandeja principal.", "Revisa spam.", "Copia el código recibido."],
             },
             {
                 "titulo": "Datos personales",
                 "texto": "Llena DPI, número de serie y datos solicitados.",
                 "items": ["El número de serie está atrás del DPI.", "Sube documentos legibles."],
+=======
+                "items": [
+                    "Revisa bandeja principal.",
+                    "Revisa spam y carpeta promocional.",
+                    "Si no llega en 5 minutos, intenta nuevamente.",
+                    "Copia el codigo de acceso.",
+                    "IMPORTANTE: No cierres la ventana del portal.",
+                ],
+                "tiempo": "~10 minutos",
+                "errores_comunes": "Correo no recibido o bloqueado por filtro.",
+            },
+            {
+                "titulo": "Datos personales",
+                "texto": "Llena DPI, numero de serie y datos solicitados.",
+                "items": [
+                    "Numero de DPI: frente del carnet.",
+                    "Numero de serie: atras del DPI (6 caracteres).",
+                    "Nombre completo: tal como aparece en el DPI.",
+                    "Comprobante de domicilio: reciente (menos de 3 meses), puede ser recibo de luz, agua, gas, telefonico o contrato de arrendamiento.",
+                    "Foto clara del comprobante: escanea o toma foto en buena iluminacion, debe verse el nombre y direccion.",
+                    "Verifica que todos los PDF sean legibles antes de continuar.",
+                    "CONSEJO: Si tienes dudas sobre el documento, consulta el portal del SAT.",
+                ],
+                "tiempo": "~10 minutos",
+                "errores_comunes": "Numero de serie incorrecto, comprobante muy antiguo o documentos borrosos.",
+>>>>>>> main
             },
             {
                 "titulo": "Actividad económica",
                 "texto": "Elige si eres asalariado, no tienes obligaciones o tienes negocio.",
-                "items": ["Si no trabajas, elige sin obligaciones.", "Si facturas, elige negocio."],
+                "items": [
+                    "Sin obligaciones: si solo trabajas por cuenta propia.",
+                    "Asalariado: si tienes empleo formal.",
+                    "Con negocio: si facturas o tienes actividad comercial.",
+                    "IMPORTANTE: Esto afecta tus obligaciones fiscales futuras.",
+                    "Si tienes negocio, tendras obligacion de presentar facturas.",
+                ],
+                "tiempo": "~5 minutos",
+                "errores_comunes": "Elegir categoria incorrecta para tu situacion.",
             },
             {
                 "titulo": "Enviar solicitud",
+<<<<<<< main
                 "texto": "Revisa toda la información antes de finalizar.",
                 "items": ["Confirma datos.", "Guarda usuario y clave.", "Espera respuesta por correo."],
+=======
+                "texto": "Revisa toda la informacion antes de finalizar.",
+                "items": [
+                    "Confirma todos los datos ingresados.",
+                    "Lee los terminos y condiciones.",
+                    "Guarda tu usuario (email) y clave en lugar seguro (usa gestor de contrasenas o archivo encriptado).",
+                    "Ejemplo de contrasena segura: NIT2026@Guatemala!Seguro (mayuscula, minuscula, numero, simbolo).",
+                    "Envia la solicitud.",
+                    "IMPORTANTE: Recibiras respuesta por correo en 24-48 horas.",
+                    "Guarda el numero de expediente que te proporcione el sistema.",
+                ],
+                "tiempo": "~5 minutos",
+                "errores_comunes": "Contrasena debil o olvidar guardar usuario y datos de la solicitud.",
+>>>>>>> main
             },
         ],
+        "proximos_pasos": [
+            "Espera la respuesta por correo (24-48 horas).",
+            "Si aprueben, recibiras tu NIT electronico.",
+            "Descarga y guarda tu NIT en PDF en lugar seguro.",
+            "Podras usarlo de inmediato en tramites del SAT.",
+            "Actualiza tus datos fiscales en el portal del SAT si es necesario.",
+            "Si es rechazada, SAT indicara razon en el correo (revisalo en spam tambien).",
+        ],
+        "renovacion": {
+            "frecuencia": "Cada 5 anos",
+            "proceso": "Realiza el mismo tramite electronico.",
+            "alertas": "El SAT te notificara por correo cuando debas renovar.",
+        },
+        "contacto_sat": {
+            "telefono": "2410-6400",
+            "horario": "De lunes a viernes, 7:30 AM a 4:00 PM",
+            "email": "atencionusuario@sat.gob.gt",
+        },
+        "casos_especiales": {
+            "extranjeros": "Requiere pasaporte vigente en lugar de DPI y puede tardar mas tiempo en procesarse.",
+            "menores_edad": "Requiere autorizacion de padres o tutores legales (presentar DPI de ambos).",
+            "empresas": "Tramite diferente en portal de Constitucion de Empresas o usar NIT temporal.",
+            "republica": "Residentes del exterior pueden usar opciones de tramite remoto o poder notariado.",
+            "rechazo": "Si es rechazado: verifica el correo de razon, corrige documentos y reintenta en el mismo portal.",
+            "problemas_correo": "Si no recibes el correo: revisa spam, confirma que el correo sea correcto, o intenta con otro correo.",
+        },
     },
     "dpi": {
         "titulo": "Trámite de DPI",
@@ -721,7 +822,12 @@ class WanbeApp:
     def mostrar_checklist(self, tramite_id: str) -> None:
         """Muestra una lista de verificación (checklist) de requisitos.
         
+<<<<<<< main
         El usuario debe marcar TODOS los requisitos para habilitar el botón "Ir al paso 1".
+=======
+        El usuario debe marcar TODOS los requisitos para habilitar el boton "Ir al paso 1".
+        Incluye informacion adicional como tiempo estimado, costo y vigencia.
+>>>>>>> main
         TEMA: LISTAS y variables de control en tkinter.
         """
         tramite = TRAMITES[tramite_id]
@@ -738,6 +844,21 @@ class WanbeApp:
             wraplength=320,
             justify="left",
         ).pack(anchor="w", padx=14, pady=(0, 8))
+
+        # Mostrar informacion adicional si existe
+        info_texto = []
+        if tramite.get("tiempo_estimado"):
+            info_texto.append(f"⏱ Tiempo: {tramite['tiempo_estimado']}")
+        if tramite.get("costo"):
+            info_texto.append(f"💰 Costo: {tramite['costo']}")
+        if tramite.get("vigencia"):
+            info_texto.append(f"📅 Vigencia: {tramite['vigencia']}")
+        
+        if info_texto:
+            info_frame = tk.Frame(caja, bg=COLORS["soft_blue"], highlightbackground=COLORS["primary"], highlightthickness=1)
+            info_frame.pack(fill="x", padx=14, pady=(0, 10))
+            for info in info_texto:
+                tk.Label(info_frame, text=info, bg=COLORS["soft_blue"], fg="white", font=("Helvetica", 9)).pack(anchor="w", padx=10, pady=2)
 
         variables = []
 
@@ -789,7 +910,12 @@ class WanbeApp:
         Componentes:
         - Indicador de progreso (Paso X de Y)
         - Barra visual de progreso (rectángulo coloreado)
+<<<<<<< main
         - Título, descripción e ítems del paso
+=======
+        - Titulo, descripcion e items del paso
+        - Tiempo estimado y errores comunes
+>>>>>>> main
         - Enlace oficial (si existe)
         - Botones Regresar y Continuar/Finalizar
         """
@@ -815,10 +941,22 @@ class WanbeApp:
         caja.pack(fill="x", padx=18, pady=8)
 
         tk.Label(caja, text=paso["titulo"], bg=COLORS["white"], fg=COLORS["text"], font=("Helvetica", 15, "bold"), wraplength=330, justify="left").pack(anchor="w", padx=14, pady=(14, 5))
+        
+        # Mostrar tiempo estimado si existe
+        if paso.get("tiempo"):
+            tk.Label(caja, text=f"⏱ Tiempo: {paso['tiempo']}", bg=COLORS["white"], fg=COLORS["soft_blue"], font=("Helvetica", 9, "bold")).pack(anchor="w", padx=14, pady=(0, 4))
+        
         tk.Label(caja, text=paso["texto"], bg=COLORS["white"], fg=COLORS["muted"], font=("Helvetica", 10), wraplength=330, justify="left").pack(anchor="w", padx=14, pady=(0, 8))
 
         for numero, item in enumerate(paso["items"], start=1):
             tk.Label(caja, text=f"{numero}. {item}", bg=COLORS["white"], fg=COLORS["text"], font=("Helvetica", 10), wraplength=320, justify="left").pack(anchor="w", padx=20, pady=2)
+
+        # Mostrar errores comunes si existen
+        if paso.get("errores_comunes"):
+            caja_error = tk.Frame(self.contenido, bg=COLORS["warning_bg"], highlightbackground=COLORS["warning"], highlightthickness=1)
+            caja_error.pack(fill="x", padx=18, pady=8)
+            tk.Label(caja_error, text="⚠ Errores comunes", bg=COLORS["warning_bg"], fg=COLORS["warning"], font=("Helvetica", 10, "bold")).pack(anchor="w", padx=14, pady=(8, 4))
+            tk.Label(caja_error, text=paso["errores_comunes"], bg=COLORS["warning_bg"], fg=COLORS["warning"], font=("Helvetica", 9), wraplength=320, justify="left").pack(anchor="w", padx=14, pady=(0, 8))
 
         if paso.get("enlace"):
             tk.Button(
@@ -886,18 +1024,86 @@ class WanbeApp:
         self.mostrar_tramite(tramite_id, guardar=False)
 
     def finalizar(self, tramite_id: str) -> None:
-        """Al terminar todos los pasos, pregunta si volver al inicio.
+        """Al terminar todos los pasos, muestra informacion final y pregunta si volver al inicio.
         
+<<<<<<< main
         Se puede deshabilitar esta confirmación desde la configuración.
+=======
+        Muestra: proximos pasos, renovacion, contacto y casos especiales.
+        Se puede deshabilitar esta confirmacion desde la configuracion.
+>>>>>>> main
         """
-        if self.configuracion["confirmar_finalizacion"]:
-            respuesta = messagebox.askyesno("Wanbe", "Se completo la guia. Deseas volver al inicio?")
-            if not respuesta:
-                return
-        self.checklist_listo[tramite_id] = False
-        self.paso_actual[tramite_id] = 0
-        self.historial = ["inicio"]
-        self.mostrar_inicio(guardar=False)
+        tramite = TRAMITES[tramite_id]
+        self.limpiar()
+        
+        tk.Label(
+            self.contenido,
+            text="✓ Guía completada",
+            bg=COLORS["white"],
+            fg=COLORS["primary"],
+            font=("Helvetica", 18, "bold"),
+        ).pack(anchor="w", padx=18, pady=(14, 4))
+
+        # Proximos pasos
+        if tramite.get("proximos_pasos"):
+            caja = tk.Frame(self.contenido, bg=COLORS["card"], highlightbackground=COLORS["border"], highlightthickness=1)
+            caja.pack(fill="x", padx=18, pady=8)
+            tk.Label(caja, text="Próximos pasos", bg=COLORS["card"], fg=COLORS["text"], font=("Helvetica", 12, "bold")).pack(anchor="w", padx=14, pady=(10, 6))
+            for paso in tramite["proximos_pasos"]:
+                tk.Label(caja, text=f"→ {paso}", bg=COLORS["card"], fg=COLORS["muted"], font=("Helvetica", 9), wraplength=320, justify="left").pack(anchor="w", padx=20, pady=2)
+            tk.Label(caja, text="", bg=COLORS["card"]).pack(pady=2)
+
+        # Renovacion
+        if tramite.get("renovacion"):
+            caja = tk.Frame(self.contenido, bg=COLORS["warning_bg"], highlightbackground=COLORS["warning"], highlightthickness=1)
+            caja.pack(fill="x", padx=18, pady=8)
+            tk.Label(caja, text="📅 Renovación", bg=COLORS["warning_bg"], fg=COLORS["warning"], font=("Helvetica", 12, "bold")).pack(anchor="w", padx=14, pady=(10, 4))
+            renovacion = tramite["renovacion"]
+            if renovacion.get("frecuencia"):
+                tk.Label(caja, text=f"Frecuencia: {renovacion['frecuencia']}", bg=COLORS["warning_bg"], fg=COLORS["warning"], font=("Helvetica", 9)).pack(anchor="w", padx=14, pady=1)
+            if renovacion.get("proceso"):
+                tk.Label(caja, text=f"Proceso: {renovacion['proceso']}", bg=COLORS["warning_bg"], fg=COLORS["warning"], font=("Helvetica", 9), wraplength=320, justify="left").pack(anchor="w", padx=14, pady=1)
+            if renovacion.get("alertas"):
+                tk.Label(caja, text=f"Alertas: {renovacion['alertas']}", bg=COLORS["warning_bg"], fg=COLORS["warning"], font=("Helvetica", 9), wraplength=320, justify="left").pack(anchor="w", padx=14, pady=1)
+            tk.Label(caja, text="", bg=COLORS["warning_bg"]).pack(pady=2)
+
+        # Contacto SAT
+        if tramite.get("contacto_sat"):
+            caja = tk.Frame(self.contenido, bg=COLORS["white"], highlightbackground=COLORS["border"], highlightthickness=1)
+            caja.pack(fill="x", padx=18, pady=8)
+            tk.Label(caja, text="📞 Contacto SAT", bg=COLORS["white"], fg=COLORS["primary"], font=("Helvetica", 12, "bold")).pack(anchor="w", padx=14, pady=(10, 4))
+            contacto = tramite["contacto_sat"]
+            if contacto.get("telefono"):
+                tk.Label(caja, text=f"Teléfono: {contacto['telefono']}", bg=COLORS["white"], fg=COLORS["text"], font=("Helvetica", 9)).pack(anchor="w", padx=14, pady=1)
+            if contacto.get("horario"):
+                tk.Label(caja, text=f"Horario: {contacto['horario']}", bg=COLORS["white"], fg=COLORS["text"], font=("Helvetica", 9)).pack(anchor="w", padx=14, pady=1)
+            if contacto.get("email"):
+                tk.Label(caja, text=f"Email: {contacto['email']}", bg=COLORS["white"], fg=COLORS["text"], font=("Helvetica", 9)).pack(anchor="w", padx=14, pady=(1, 10))
+
+        # Casos especiales
+        if tramite.get("casos_especiales"):
+            caja = tk.Frame(self.contenido, bg=COLORS["card"], highlightbackground=COLORS["border"], highlightthickness=1)
+            caja.pack(fill="x", padx=18, pady=8)
+            tk.Label(caja, text="⚙ Casos especiales", bg=COLORS["card"], fg=COLORS["text"], font=("Helvetica", 12, "bold")).pack(anchor="w", padx=14, pady=(10, 4))
+            casos = tramite["casos_especiales"]
+            for caso, descripcion in casos.items():
+                tk.Label(caja, text=f"• {caso}: ", bg=COLORS["card"], fg=COLORS["text"], font=("Helvetica", 9, "bold")).pack(anchor="w", padx=14, pady=(3, 0))
+                tk.Label(caja, text=descripcion, bg=COLORS["card"], fg=COLORS["muted"], font=("Helvetica", 9), wraplength=310, justify="left").pack(anchor="w", padx=24, pady=(0, 4))
+
+        # Botones finales
+        barra = tk.Frame(self.contenido, bg=COLORS["white"])
+        barra.pack(fill="x", padx=18, pady=(8, 20))
+
+        tk.Button(
+            barra,
+            text="Volver al inicio",
+            command=lambda: self.volver(),
+            bg=COLORS["purple"],
+            fg="white",
+            relief="flat",
+            font=("Helvetica", 11, "bold"),
+            pady=11,
+        ).pack(fill="x")
 
     def mostrar_ayuda(self) -> None:
         texto = (
