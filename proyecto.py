@@ -23,7 +23,7 @@ import webbrowser
 
 BASE_DIR = Path(__file__).resolve().parent
 ASSETS_DIR = BASE_DIR / "assets"
-#estructira estilo
+#estructira estilo lf
 COLORS = {
     "background": "#eef3ff",
     "white": "#ffffff",
@@ -88,7 +88,7 @@ TRAMITES = {
         "descripcion": "Solicitud electronica para obtener NIT por primera vez.",
         "requisitos": ["DPI vigente", "Recibo de luz o agua", "Correo electronico"],
         "pasos": [
-            {
+            {#comentario
                 "titulo": "Abre portal SAT",
                 "texto": "Inicia en el portal oficial de Solicitud Electronica de NIT.",
                 "items": ["Completa captcha.", "Escribe tu correo.", "Solicita el enlace."],
