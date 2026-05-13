@@ -23,7 +23,7 @@ import webbrowser
 
 BASE_DIR = Path(__file__).resolve().parent
 ASSETS_DIR = BASE_DIR / "assets"
-
+#estructira estilo
 COLORS = {
     "background": "#eef3ff",
     "white": "#ffffff",
