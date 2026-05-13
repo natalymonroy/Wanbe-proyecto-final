@@ -1,4 +1,4 @@
-P#!/usr/bin/env python3
+#!/usr/bin/env python3
 """
 Wanbe - Proyecto final en Python
 
@@ -89,7 +89,6 @@ TRAMITES = {
         "titulo": "Solicitud de NIT",
         "portal": "SAT",
         "icono": "NIT",
-<<<<<<< main
         "descripcion": "Solicitud electrónica para obtener NIT por primera vez.",
         "requisitos": ["DPI vigente", "Recibo de luz o agua", "Correo electrónico"],
         "pasos": [
@@ -97,28 +96,6 @@ TRAMITES = {
                 "titulo": "Abre portal SAT",
                 "texto": "Inicia en el portal oficial de Solicitud Electrónica de NIT.",
                 "items": ["Completa captcha.", "Escribe tu correo.", "Solicita el enlace."],
-=======
-        "descripcion": "Solicitud electronica para obtener NIT por primera vez.",
-        "tiempo_estimado": "30-45 minutos",
-        "costo": "Gratuito",
-        "vigencia": "Indefinida (renovacion cada 5 anos)",
-        "requisitos": [
-            "DPI vigente",
-            "Recibo de luz, agua o telefono",
-            "Correo electronico activo",
-            "Numero de serie del DPI (atras del carnet)",
-        ],
-        "pasos": [
-            {
-                "titulo": "Abre portal SAT",
-                "texto": "Inicia en el portal oficial de Solicitud Electronica de NIT.",
-                "items": [
-                    "Completa captcha.",
-                    "Escribe tu correo valido.",
-                    "Solicita el enlace.",
-                    "CONSEJO: Usa un correo personal que revises frecuentemente.",
-                ],
->>>>>>> main
                 "enlace": "https://portal.sat.gob.gt/portal/solicitud-electronica-de-nit/",
                 "tiempo": "~5 minutos",
                 "errores_comunes": "Captcha incorrecto o correo invalido.",
@@ -126,39 +103,12 @@ TRAMITES = {
             {
                 "titulo": "Valida correo",
                 "texto": "Busca en tu correo el mensaje enviado por SAT.",
-<<<<<<< main
                 "items": ["Revisa bandeja principal.", "Revisa spam.", "Copia el código recibido."],
             },
             {
                 "titulo": "Datos personales",
                 "texto": "Llena DPI, número de serie y datos solicitados.",
                 "items": ["El número de serie está atrás del DPI.", "Sube documentos legibles."],
-=======
-                "items": [
-                    "Revisa bandeja principal.",
-                    "Revisa spam y carpeta promocional.",
-                    "Si no llega en 5 minutos, intenta nuevamente.",
-                    "Copia el codigo de acceso.",
-                    "IMPORTANTE: No cierres la ventana del portal.",
-                ],
-                "tiempo": "~10 minutos",
-                "errores_comunes": "Correo no recibido o bloqueado por filtro.",
-            },
-            {
-                "titulo": "Datos personales",
-                "texto": "Llena DPI, numero de serie y datos solicitados.",
-                "items": [
-                    "Numero de DPI: frente del carnet.",
-                    "Numero de serie: atras del DPI (6 caracteres).",
-                    "Nombre completo: tal como aparece en el DPI.",
-                    "Comprobante de domicilio: reciente (menos de 3 meses), puede ser recibo de luz, agua, gas, telefonico o contrato de arrendamiento.",
-                    "Foto clara del comprobante: escanea o toma foto en buena iluminacion, debe verse el nombre y direccion.",
-                    "Verifica que todos los PDF sean legibles antes de continuar.",
-                    "CONSEJO: Si tienes dudas sobre el documento, consulta el portal del SAT.",
-                ],
-                "tiempo": "~10 minutos",
-                "errores_comunes": "Numero de serie incorrecto, comprobante muy antiguo o documentos borrosos.",
->>>>>>> main
             },
             {
                 "titulo": "Actividad económica",
@@ -175,23 +125,8 @@ TRAMITES = {
             },
             {
                 "titulo": "Enviar solicitud",
-<<<<<<< main
                 "texto": "Revisa toda la información antes de finalizar.",
                 "items": ["Confirma datos.", "Guarda usuario y clave.", "Espera respuesta por correo."],
-=======
-                "texto": "Revisa toda la informacion antes de finalizar.",
-                "items": [
-                    "Confirma todos los datos ingresados.",
-                    "Lee los terminos y condiciones.",
-                    "Guarda tu usuario (email) y clave en lugar seguro (usa gestor de contrasenas o archivo encriptado).",
-                    "Ejemplo de contrasena segura: NIT2026@Guatemala!Seguro (mayuscula, minuscula, numero, simbolo).",
-                    "Envia la solicitud.",
-                    "IMPORTANTE: Recibiras respuesta por correo en 24-48 horas.",
-                    "Guarda el numero de expediente que te proporcione el sistema.",
-                ],
-                "tiempo": "~5 minutos",
-                "errores_comunes": "Contrasena debil o olvidar guardar usuario y datos de la solicitud.",
->>>>>>> main
             },
         ],
         "proximos_pasos": [
@@ -822,12 +757,7 @@ class WanbeApp:
     def mostrar_checklist(self, tramite_id: str) -> None:
         """Muestra una lista de verificación (checklist) de requisitos.
         
-<<<<<<< main
         El usuario debe marcar TODOS los requisitos para habilitar el botón "Ir al paso 1".
-=======
-        El usuario debe marcar TODOS los requisitos para habilitar el boton "Ir al paso 1".
-        Incluye informacion adicional como tiempo estimado, costo y vigencia.
->>>>>>> main
         TEMA: LISTAS y variables de control en tkinter.
         """
         tramite = TRAMITES[tramite_id]
