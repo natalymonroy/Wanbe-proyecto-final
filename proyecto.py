@@ -6,9 +6,9 @@ Aplicacion de escritorio sencilla inspirada en la app web original.
 Usa tkinter, por lo que no necesita instalar librerias externas.
 
 Temas de programacion aplicados:
-- Listas: pasos y requisitos de cada tramite.
+- Listas: pasos y requisitos de cada trámite.
 - Matrices: rutas principales de la aplicacion.
-- Diccionarios: base de datos de tramites.
+- Diccionarios: base de datos de trámites.
 - Recursion: buscador dentro del arbol de categorias.
 """
 
@@ -21,9 +21,18 @@ import unicodedata
 import webbrowser
 
 
+<<<<<<< HEAD
 BASE_DIR = Path(__file__).resolve().parent
 ASSETS_DIR = BASE_DIR / "assets"
 #estructira estilo lf
+=======
+# Rutas de directorios para acceder a archivos de la aplicacion
+BASE_DIR = Path(__file__).resolve().parent  # Directorio actual del archivo
+ASSETS_DIR = BASE_DIR / "assets"  # Carpeta donde estan las imagenes y recursos
+
+# DICCIONARIO DE COLORES: Define la paleta de colores usada en toda la interfaz
+# Esto permite mantener coherencia visual y cambiar temas facilmente
+>>>>>>> b07e1aa74406e731e386d393c90a606cf4624514
 COLORS = {
     "background": "#eef3ff",
     "white": "#ffffff",
@@ -35,27 +44,28 @@ COLORS = {
     "purple": "#5C1399",
     "soft_blue": "#7886C7",
     "warning_bg": "#fff7ed",
-    "warning": "#92400e",
+    "warning": "#92400e",  # Rojo/naranja para alertas y advertencias
 }
 
-
-# Matriz: cada fila representa una ruta general de navegacion.
+# MATRIZ RUTAS: Estructura que muestra los caminos de navegacion en la app
+# Cada fila es una ruta del inicio hasta un trámite específico
+# Ejemplo: [Inicio, SAT, Vehículos, Pago de Calcomanía] muestra la navegación completa
 RUTAS = [
-    ["Inicio", "SAT", "Vehiculos", "Pago de Calcomanía"],
+    ["Inicio", "SAT", "Vehículos", "Pago de Calcomanía"],
     ["Inicio", "SAT", "Individuales", "Solicitud de NIT"],
-    ["Inicio", "RENAP", "Tramite de DPI"],
-    ["Inicio", "RENAP", "Certificados en Linea"],
+    ["Inicio", "RENAP", "Trámite de DPI"],
 ]
 
-
-# Diccionario principal de tramites.
+# DICCIONARIO TRAMITES: Base de datos con todos los trámites disponibles
+# Cada trámite contiene: título, portal, ícono, descripción, requisitos y pasos
+# Los "pasos" tienen: título, texto, items (lista de instrucciones) y enlace opcional
 TRAMITES = {
     "calcomania": {
         "titulo": "Pago de Calcomanía",
         "portal": "SAT",
         "icono": "CAR",
-        "descripcion": "Pago del Impuesto Sobre Circulacion de Vehiculos.",
-        "requisitos": ["Placa del vehiculo", "NIT del propietario"],
+        "descripcion": "Pago del Impuesto Sobre Circulación de Vehículos.",
+        "requisitos": ["Placa del vehículo", "NIT del propietario"],
         "pasos": [
             {
                 "titulo": "Revisa datos del vehiculo",
@@ -64,14 +74,14 @@ TRAMITES = {
             },
             {
                 "titulo": "Genera formulario SAT-4091",
-                "texto": "Ingresa a Declaraguate y genera el formulario de vehiculos.",
-                "items": ["Busca la seccion Vehiculos.", "Ingresa NIT y placa.", "Valida y congela."],
+                "texto": "Ingresa a Declaraguate y genera el formulario de vehículos.",
+                "items": ["Busca la sección Vehículos.", "Ingresa NIT y placa.", "Valida y congela."],
                 "enlace": "https://declaraguate.sat.gob.gt/declaraguate-web/",
             },
             {
                 "titulo": "Paga en banco",
-                "texto": "Usa el numero de formulario y numero de acceso.",
-                "items": ["Verifica el monto.", "Paga en linea o ventanilla.", "Guarda recibo."],
+                "texto": "Usa el número de formulario y número de acceso.",
+                "items": ["Verifica el monto.", "Paga en línea o ventanilla.", "Guarda recibo."],
             },
             {
                 "titulo": "Imprime calcomanía",
@@ -85,54 +95,90 @@ TRAMITES = {
         "titulo": "Solicitud de NIT",
         "portal": "SAT",
         "icono": "NIT",
-        "descripcion": "Solicitud electronica para obtener NIT por primera vez.",
-        "requisitos": ["DPI vigente", "Recibo de luz o agua", "Correo electronico"],
+        "descripcion": "Solicitud electrónica para obtener NIT por primera vez.",
+        "requisitos": ["DPI vigente", "Recibo de luz o agua", "Correo electrónico"],
         "pasos": [
             {#comentario
                 "titulo": "Abre portal SAT",
-                "texto": "Inicia en el portal oficial de Solicitud Electronica de NIT.",
+                "texto": "Inicia en el portal oficial de Solicitud Electrónica de NIT.",
                 "items": ["Completa captcha.", "Escribe tu correo.", "Solicita el enlace."],
                 "enlace": "https://portal.sat.gob.gt/portal/solicitud-electronica-de-nit/",
+                "tiempo": "~5 minutos",
+                "errores_comunes": "Captcha incorrecto o correo invalido.",
             },
             {
                 "titulo": "Valida correo",
                 "texto": "Busca en tu correo el mensaje enviado por SAT.",
-                "items": ["Revisa bandeja principal.", "Revisa spam.", "Copia el codigo recibido."],
+                "items": ["Revisa bandeja principal.", "Revisa spam.", "Copia el código recibido."],
             },
             {
                 "titulo": "Datos personales",
-                "texto": "Llena DPI, numero de serie y datos solicitados.",
-                "items": ["El numero de serie esta atras del DPI.", "Sube documentos legibles."],
+                "texto": "Llena DPI, número de serie y datos solicitados.",
+                "items": ["El número de serie está atrás del DPI.", "Sube documentos legibles."],
             },
             {
-                "titulo": "Actividad economica",
+                "titulo": "Actividad económica",
                 "texto": "Elige si eres asalariado, no tienes obligaciones o tienes negocio.",
-                "items": ["Si no trabajas, elige sin obligaciones.", "Si facturas, elige negocio."],
+                "items": [
+                    "Sin obligaciones: si solo trabajas por cuenta propia.",
+                    "Asalariado: si tienes empleo formal.",
+                    "Con negocio: si facturas o tienes actividad comercial.",
+                    "IMPORTANTE: Esto afecta tus obligaciones fiscales futuras.",
+                    "Si tienes negocio, tendras obligacion de presentar facturas.",
+                ],
+                "tiempo": "~5 minutos",
+                "errores_comunes": "Elegir categoria incorrecta para tu situacion.",
             },
             {
                 "titulo": "Enviar solicitud",
-                "texto": "Revisa toda la informacion antes de finalizar.",
+                "texto": "Revisa toda la información antes de finalizar.",
                 "items": ["Confirma datos.", "Guarda usuario y clave.", "Espera respuesta por correo."],
             },
         ],
+        "proximos_pasos": [
+            "Espera la respuesta por correo (24-48 horas).",
+            "Si aprueben, recibiras tu NIT electronico.",
+            "Descarga y guarda tu NIT en PDF en lugar seguro.",
+            "Podras usarlo de inmediato en tramites del SAT.",
+            "Actualiza tus datos fiscales en el portal del SAT si es necesario.",
+            "Si es rechazada, SAT indicara razon en el correo (revisalo en spam tambien).",
+        ],
+        "renovacion": {
+            "frecuencia": "Cada 5 anos",
+            "proceso": "Realiza el mismo tramite electronico.",
+            "alertas": "El SAT te notificara por correo cuando debas renovar.",
+        },
+        "contacto_sat": {
+            "telefono": "2410-6400",
+            "horario": "De lunes a viernes, 7:30 AM a 4:00 PM",
+            "email": "atencionusuario@sat.gob.gt",
+        },
+        "casos_especiales": {
+            "extranjeros": "Requiere pasaporte vigente en lugar de DPI y puede tardar mas tiempo en procesarse.",
+            "menores_edad": "Requiere autorizacion de padres o tutores legales (presentar DPI de ambos).",
+            "empresas": "Tramite diferente en portal de Constitucion de Empresas o usar NIT temporal.",
+            "republica": "Residentes del exterior pueden usar opciones de tramite remoto o poder notariado.",
+            "rechazo": "Si es rechazado: verifica el correo de razon, corrige documentos y reintenta en el mismo portal.",
+            "problemas_correo": "Si no recibes el correo: revisa spam, confirma que el correo sea correcto, o intenta con otro correo.",
+        },
     },
     "dpi": {
-        "titulo": "Tramite de DPI",
+        "titulo": "Trámite de DPI",
         "portal": "RENAP",
         "icono": "DPI",
-        "descripcion": "Guia basica para tramitar el Documento Personal de Identificacion.",
+        "descripcion": "Guía básica para tramitar el Documento Personal de Identificación.",
         "requisitos": ["Certificado de nacimiento", "Boleto de ornato"],
         "pasos": [
             {
                 "titulo": "Certificado de nacimiento",
                 "texto": "Solicita un certificado reciente en RENAP o ePortal.",
-                "items": ["Presencial: Q15.", "En linea: Q19.", "Debe estar vigente."],
+                "items": ["Presencial: Q15.", "En línea: Q19.", "Debe estar vigente."],
                 "enlace": "https://eportal.renap.gob.gt/",
             },
             {
                 "titulo": "Pago en banco",
                 "texto": "Paga la tarifa del DPI.",
-                "items": ["Costo usual: Q100.", "Mayores de 60 anos: gratuito."],
+                "items": ["Costo usual: Q100.", "Mayores de 60 años: gratuito."],
             },
             {
                 "titulo": "Visita RENAP",
@@ -146,45 +192,23 @@ TRAMITES = {
             },
         ],
     },
-    "certificados": {
-        "titulo": "Certificados en Linea",
-        "portal": "RENAP",
-        "icono": "PDF",
-        "descripcion": "Solicitud de certificados desde ePortal RENAP.",
-        "requisitos": ["CUI", "Correo electronico", "Medio de pago"],
-        "pasos": [
-            {
-                "titulo": "Entrar al ePortal",
-                "texto": "Ingresa con tu CUI o crea usuario.",
-                "items": ["Usa correo personal.", "Crea una contrasena segura."],
-                "enlace": "https://eportal.renap.gob.gt/",
-            },
-            {
-                "titulo": "Elegir certificado",
-                "texto": "Selecciona el certificado que necesitas.",
-                "items": ["Nacimiento.", "Matrimonio.", "Otros disponibles."],
-            },
-            {
-                "titulo": "Pagar y descargar",
-                "texto": "Paga y guarda el PDF.",
-                "items": ["Costo aproximado: Q19.", "Verifica que el PDF abra bien."],
-            },
-        ],
-    },
 }
 
-
-# Arbol de categorias. El buscador lo recorre con recursion.
+# ESTRUCTURA JERÁRQUICA MENU: Árbol de navegación con categorías y trámites
+# Es una estructura anidada que permite:
+# - Navegar por categorías (SAT, RENAP, subcategorías)
+# - Acceder a trámites específicos
+# - Usar recursión para buscar en toda la estructura
 MENU = [
     {
         "id": "sat",
         "titulo": "Portal SAT",
-        "subtitulo": "Vehiculos y NIT",
+        "subtitulo": "Vehículos y NIT",
         "icono": "SAT",
         "hijos": [
             {
                 "id": "vehiculos",
-                "titulo": "Vehiculos",
+                "titulo": "Vehículos",
                 "subtitulo": "Calcomanía y placas",
                 "icono": "CAR",
                 "hijos": [{"tramite": "calcomania"}],
@@ -201,30 +225,76 @@ MENU = [
     {
         "id": "renap",
         "titulo": "Portal RENAP",
-        "subtitulo": "DPI y certificados",
+        "subtitulo": "Trámite de DPI",
         "icono": "DPI",
-        "hijos": [{"tramite": "dpi"}, {"tramite": "certificados"}],
+        "hijos": [{"tramite": "dpi"}],
     },
 ]
 
 
+# ========== FUNCIONES DE BUSQUEDA Y UTILIDAD ==========
+
 def normalizar(texto: str) -> str:
-    """Convierte texto a minusculas y elimina tildes para mejorar busquedas."""
+    """Convierte texto a minúsculas y elimina tildes para mejorar búsquedas.
+    
+    Ejemplo: 'PAGO de Calcomanía' -> 'pago de calcomania'
+    Esto permite que búsquedas sin tildes encuentren resultados exactos.
+    Usa el módulo 'unicodedata' para descomponer caracteres acentuados.
+    """
     texto = unicodedata.normalize("NFD", texto.lower())
     return "".join(letra for letra in texto if unicodedata.category(letra) != "Mn")
 
 
+def puntuar_coincidencia(texto: str, consulta: str) -> int:
+    """Asigna prioridad (1-3) a coincidencias según su relevancia.
+    
+    Retorna:
+        3 si la consulta está al inicio del texto (máxima prioridad)
+        2 si la consulta está al inicio de alguna palabra
+        1 si la consulta está dentro del texto (prioridad baja)
+       -1 si no hay coincidencia
+    
+    Esto ordena los resultados de búsqueda de forma inteligente.
+    """
+    texto_normalizado = normalizar(texto)
+    consulta_normalizada = normalizar(consulta)
+
+    if not consulta_normalizada or consulta_normalizada not in texto_normalizado:
+        return -1
+
+    if texto_normalizado.startswith(consulta_normalizada):
+        return 3
+    if any(parte.startswith(consulta_normalizada) for parte in texto_normalizado.split()):
+        return 2
+    if consulta_normalizada in texto_normalizado:
+        return 1
+    return 0
+
+
 def buscar_recursivo(nodos: list[dict], consulta: str, ruta: str = "") -> list[dict]:
-    """Busca tramites dentro del arbol MENU usando recursion."""
+    """Busca trámites y categorías en toda la estructura jerárquica usando RECURSIÓN.
+    
+    TEMA DE PROGRAMACION: RECURSIÓN
+    - Recorre el árbol MENU de forma profunda
+    - Busca coincidencias en título, descripción y portal
+    - Se llama a sí misma para explorar subcategorías
+    
+    Parámetros:
+        nodos: lista de nodos (categorías o trámites) a explorar
+        consulta: texto a buscar (ej: 'DPI', 'vehículos')
+        ruta: camino desde el inicio (ej: 'Portal SAT > Individuales')
+    
+    Retorna: lista de resultados ordenados por relevancia
+    """
     resultados = []
-    consulta = normalizar(consulta)
 
     for nodo in nodos:
         if "tramite" in nodo:
             clave = nodo["tramite"]
             tramite = TRAMITES[clave]
             texto = " ".join([tramite["titulo"], tramite["descripcion"], tramite["portal"]])
-            if consulta in normalizar(texto):
+            puntaje = puntuar_coincidencia(texto, consulta)
+            if puntaje >= 0:
                 resultados.append(
                     {
                         "tipo": "tramite",
@@ -232,12 +302,14 @@ def buscar_recursivo(nodos: list[dict], consulta: str, ruta: str = "") -> list[d
                         "titulo": tramite["titulo"],
                         "subtitulo": ruta,
                         "icono": tramite["icono"],
+                        "prioridad": puntaje,
                     }
                 )
             continue
 
         texto_categoria = f"{nodo['titulo']} {nodo['subtitulo']}"
-        if consulta in normalizar(texto_categoria):
+        puntaje = puntuar_coincidencia(texto_categoria, consulta)
+        if puntaje >= 0:
             resultados.append(
                 {
                     "tipo": "categoria",
@@ -245,17 +317,35 @@ def buscar_recursivo(nodos: list[dict], consulta: str, ruta: str = "") -> list[d
                     "titulo": nodo["titulo"],
                     "subtitulo": nodo["subtitulo"],
                     "icono": nodo["icono"],
+                    "prioridad": puntaje,
                 }
             )
 
         nueva_ruta = f"{ruta} > {nodo['titulo']}" if ruta else nodo["titulo"]
         resultados.extend(buscar_recursivo(nodo.get("hijos", []), consulta, nueva_ruta))
 
-    return resultados
+    return sorted(
+        resultados,
+        key=lambda item: (
+            item.get("prioridad", 0),
+            1 if item.get("tipo") == "tramite" else 0,
+            len(item.get("subtitulo", "")),
+            item.get("titulo", ""),
+        ),
+        reverse=True,
+    )
 
 
 def encontrar_categoria(nodos: list[dict], categoria_id: str) -> dict | None:
-    """Encuentra una categoria dentro del arbol usando recursion."""
+    """Busca una categoria especifica en el arbol MENU usando RECURSION.
+    
+    TEMA DE PROGRAMACION: RECURSION
+    - Se usa para navegar: cuando el usuario hace clic en SAT o RENAP
+    - Retorna el nodo completo con sus hijos
+    - Retorna None si no existe
+    
+    Ejemplo: encontrar_categoria(MENU, 'sat') -> {id, titulo, hijos, ...}
+    """
     for nodo in nodos:
         if nodo.get("id") == categoria_id:
             return nodo
@@ -265,17 +355,38 @@ def encontrar_categoria(nodos: list[dict], categoria_id: str) -> dict | None:
     return None
 
 
+# ========== CLASE PRINCIPAL: APLICACION WANBE ==========
+
 class WanbeApp:
+    """Aplicación de escritorio usando tkinter (librería gráfica de Python).
+    
+    Responsabilidades:
+    - Crear la ventana principal
+    - Manejar la navegación entre pantallas
+    - Mostrar los trámites con sus pasos
+    - Gestionar el checklist de requisitos
+    
+    TEMA DE PROGRAMACION: PROGRAMACIÓN ORIENTADA A OBJETOS (OOP)
+    - Clase que encapsula toda la interfaz gráfica
+    - Atributos (self.) para guardar estado
+    - Métodos para cada acción del usuario
+    """
+    
     def __init__(self) -> None:
+        """Inicializa la aplicacion y crea la ventana principal."""
+        # Crear ventana principal con tkinter
         self.root = tk.Tk()
         self.root.title("Wanbe - Proyecto Final")
-        self.root.geometry("430x720")
-        self.root.minsize(390, 620)
+        self.root.geometry("430x720")  # Tamaño inicial (ancho x alto)
+        self.root.minsize(390, 620)    # Tamaño minimo para no romper el layout
         self.root.configure(bg=COLORS["background"])
 
-        self.historial = ["inicio"]
-        self.paso_actual = {clave: 0 for clave in TRAMITES}
-        self.checklist_listo = {clave: False for clave in TRAMITES}
+        # TEMA: LISTAS - Usar para guardar el historial de navegacion
+        self.historial = ["inicio"]  # Stack de pantallas visitadas para el boton "Atras"
+        
+        # TEMA: DICCIONARIOS - Guardar estado de cada tramite
+        self.paso_actual = {clave: 0 for clave in TRAMITES}  # Paso actual en cada tramite
+        self.checklist_listo = {clave: False for clave in TRAMITES}  # Si completo el checklist
         self.configuracion = {
             "ventana_compacta": False,
             "confirmar_finalizacion": True,
@@ -287,6 +398,13 @@ class WanbeApp:
         self.mostrar_inicio()
 
     def construir_base(self) -> None:
+        """Construye la estructura base de la interfaz: header, canvas y scroll.
+        
+        Componentes:
+        - Header: logo, titulo, botones de ayuda y configuracion
+        - Canvas: area principal con scroll vertical para contenido dinamico
+        - Frame de contenido: donde se carga cada pantalla
+        """
         self.marco_app = tk.Frame(self.root, bg=COLORS["white"])
         self.marco_app.pack(fill="both", expand=True, padx=10, pady=10)
 
@@ -365,6 +483,11 @@ class WanbeApp:
         self.root.bind_all("<MouseWheel>", self.mover_scroll)
 
     def cargar_imagen(self, archivo: str, tamano: int) -> tk.PhotoImage | None:
+        """Carga y redimensiona imagenes de la carpeta assets.
+        
+        Retorna None si la imagen no existe o hay error de formato.
+        Usa subsample() para reducir el tamaño sin perder calidad.
+        """
         ruta = ASSETS_DIR / archivo
         if not ruta.exists():
             return None
@@ -378,14 +501,22 @@ class WanbeApp:
             return None
 
     def mover_scroll(self, evento: tk.Event) -> None:
-        self.canvas.yview_scroll(int(-1 * (evento.delta / 120)), "units")
+        """Maneja el scroll con la rueda del mouse en el canvas.
+        Permite scroll suave dentro del contenido dinamico.
+        """
 
     def limpiar(self) -> None:
-        for widget in self.contenido.winfo_children():
-            widget.destroy()
-        self.canvas.yview_moveto(0)
+        """Elimina todos los widgets del contenido y reinicia el scroll al inicio.
+        Se usa al cambiar de pantalla para que no se superponga contenido.
+        """
 
     def cambiar_pantalla(self, pantalla: str, guardar: bool = True) -> None:
+        """Cambia a una pantalla diferente (inicio, categoria o tramite).
+        
+        Mantiene el historial para el boton 'Atras'.
+        TEMA: Patrones de navegacion y gestion de estado.
+        """
+        # Guardar en el historial si no es la pantalla actual
         if guardar and self.historial[-1] != pantalla:
             self.historial.append(pantalla)
 
@@ -497,16 +628,23 @@ class WanbeApp:
         return boton
 
     def mostrar_inicio(self, guardar: bool = True) -> None:
+        """Muestra la pantalla principal con SAT y RENAP, y campo de búsqueda.
+        
+        TEMA: Búsqueda dinámica
+        - Implementa búsqueda en tiempo real con buscar_recursivo
+        - Usa KeyRelease para detectar cambios en el campo de texto
+        - Prioriza resultados relevantes por coincidencia
+        """
         if guardar:
-            self.historial = ["inicio"]
-        self.limpiar()
+            self.historial = ["inicio"]  # Reiniciar historial
+        self.limpiar()  # Limpiar contenido anterior
         self.actualizar_header("Inicio")
 
         hero = tk.Frame(self.contenido, bg=COLORS["primary"])
         hero.pack(fill="x", padx=18, pady=(14, 12))
         tk.Label(
             hero,
-            text="En que tramite te guiamos hoy?",
+            text="¿En qué trámite te guiamos hoy?",
             bg=COLORS["primary"],
             fg="white",
             font=("Helvetica", 19, "bold"),
@@ -514,16 +652,7 @@ class WanbeApp:
             anchor="w",
             wraplength=330,
         ).pack(fill="x", padx=16, pady=(20, 4))
-        tk.Label(
-            hero,
-            text="Guia visual sencilla para tramites de SAT y RENAP.",
-            bg=COLORS["primary"],
-            fg="#dbeafe",
-            font=("Helvetica", 10),
-            justify="left",
-            anchor="w",
-            wraplength=330,
-        ).pack(fill="x", padx=16, pady=(0, 20))
+        
 
         busqueda = tk.Entry(self.contenido, font=("Helvetica", 12), relief="flat", bg=COLORS["card"], fg=COLORS["text"])
         busqueda.pack(fill="x", padx=18, pady=(0, 10), ipady=10)
@@ -589,9 +718,13 @@ class WanbeApp:
         tk.Label(caja, text=texto, bg=COLORS["card"], fg=COLORS["muted"], font=("Helvetica", 10), wraplength=320, justify="left").pack(anchor="w", padx=14, pady=(0, 14))
 
     def mostrar_categoria(self, categoria_id: str, guardar: bool = True) -> None:
+        """Muestra una categoría (SAT o RENAP) con sus trámites o subcategorías.
+        
+        Se usa cuando el usuario hace clic en una categoría del menú.
+        """
         if guardar:
-            self.historial.append(categoria_id)
-        self.limpiar()
+            self.historial.append(categoria_id)  # Agregar al historial
+        self.limpiar()  # Limpiar pantalla anterior
 
         categoria = encontrar_categoria(MENU, categoria_id)
         if categoria is None:
@@ -610,8 +743,12 @@ class WanbeApp:
                 self.tarjeta(hijo["titulo"], hijo["subtitulo"], hijo["icono"], lambda h=hijo: self.cambiar_pantalla(h["id"]))
 
     def mostrar_tramite(self, tramite_id: str, guardar: bool = True) -> None:
+        """Muestra la pantalla de un trámite específico.
+        
+        Muestra primero el CHECKLIST (si no lo completó), después los PASOS.
+        """
         if guardar:
-            self.historial.append(tramite_id)
+            self.historial.append(tramite_id)  # Agregar al historial
         self.limpiar()
 
         tramite = TRAMITES[tramite_id]
@@ -624,6 +761,11 @@ class WanbeApp:
             self.mostrar_paso(tramite_id)
 
     def mostrar_checklist(self, tramite_id: str) -> None:
+        """Muestra una lista de verificación (checklist) de requisitos.
+        
+        El usuario debe marcar TODOS los requisitos para habilitar el botón "Ir al paso 1".
+        TEMA: LISTAS y variables de control en tkinter.
+        """
         tramite = TRAMITES[tramite_id]
         caja = tk.Frame(self.contenido, bg=COLORS["card"], highlightbackground=COLORS["border"], highlightthickness=1)
         caja.pack(fill="x", padx=18, pady=10)
@@ -638,6 +780,21 @@ class WanbeApp:
             wraplength=320,
             justify="left",
         ).pack(anchor="w", padx=14, pady=(0, 8))
+
+        # Mostrar informacion adicional si existe
+        info_texto = []
+        if tramite.get("tiempo_estimado"):
+            info_texto.append(f"⏱ Tiempo: {tramite['tiempo_estimado']}")
+        if tramite.get("costo"):
+            info_texto.append(f"💰 Costo: {tramite['costo']}")
+        if tramite.get("vigencia"):
+            info_texto.append(f"📅 Vigencia: {tramite['vigencia']}")
+        
+        if info_texto:
+            info_frame = tk.Frame(caja, bg=COLORS["soft_blue"], highlightbackground=COLORS["primary"], highlightthickness=1)
+            info_frame.pack(fill="x", padx=14, pady=(0, 10))
+            for info in info_texto:
+                tk.Label(info_frame, text=info, bg=COLORS["soft_blue"], fg="white", font=("Helvetica", 9)).pack(anchor="w", padx=10, pady=2)
 
         variables = []
 
@@ -684,6 +841,20 @@ class WanbeApp:
         self.mostrar_tramite(tramite_id, guardar=False)
 
     def mostrar_paso(self, tramite_id: str) -> None:
+        """Muestra un paso específico del trámite con barra de progreso.
+        
+        Componentes:
+        - Indicador de progreso (Paso X de Y)
+        - Barra visual de progreso (rectángulo coloreado)
+<<<<<<< main
+        - Título, descripción e ítems del paso
+=======
+        - Titulo, descripcion e items del paso
+        - Tiempo estimado y errores comunes
+>>>>>>> main
+        - Enlace oficial (si existe)
+        - Botones Regresar y Continuar/Finalizar
+        """
         tramite = TRAMITES[tramite_id]
         indice = self.paso_actual[tramite_id]
         pasos = tramite["pasos"]
@@ -706,10 +877,22 @@ class WanbeApp:
         caja.pack(fill="x", padx=18, pady=8)
 
         tk.Label(caja, text=paso["titulo"], bg=COLORS["white"], fg=COLORS["text"], font=("Helvetica", 15, "bold"), wraplength=330, justify="left").pack(anchor="w", padx=14, pady=(14, 5))
+        
+        # Mostrar tiempo estimado si existe
+        if paso.get("tiempo"):
+            tk.Label(caja, text=f"⏱ Tiempo: {paso['tiempo']}", bg=COLORS["white"], fg=COLORS["soft_blue"], font=("Helvetica", 9, "bold")).pack(anchor="w", padx=14, pady=(0, 4))
+        
         tk.Label(caja, text=paso["texto"], bg=COLORS["white"], fg=COLORS["muted"], font=("Helvetica", 10), wraplength=330, justify="left").pack(anchor="w", padx=14, pady=(0, 8))
 
         for numero, item in enumerate(paso["items"], start=1):
             tk.Label(caja, text=f"{numero}. {item}", bg=COLORS["white"], fg=COLORS["text"], font=("Helvetica", 10), wraplength=320, justify="left").pack(anchor="w", padx=20, pady=2)
+
+        # Mostrar errores comunes si existen
+        if paso.get("errores_comunes"):
+            caja_error = tk.Frame(self.contenido, bg=COLORS["warning_bg"], highlightbackground=COLORS["warning"], highlightthickness=1)
+            caja_error.pack(fill="x", padx=18, pady=8)
+            tk.Label(caja_error, text="⚠ Errores comunes", bg=COLORS["warning_bg"], fg=COLORS["warning"], font=("Helvetica", 10, "bold")).pack(anchor="w", padx=14, pady=(8, 4))
+            tk.Label(caja_error, text=paso["errores_comunes"], bg=COLORS["warning_bg"], fg=COLORS["warning"], font=("Helvetica", 9), wraplength=320, justify="left").pack(anchor="w", padx=14, pady=(0, 8))
 
         if paso.get("enlace"):
             tk.Button(
@@ -735,6 +918,11 @@ class WanbeApp:
             tk.Label(caja, text=f"- {requisito}", bg=COLORS["warning_bg"], fg=COLORS["warning"], font=("Helvetica", 10), wraplength=320, justify="left").pack(anchor="w", padx=20, pady=2)
 
     def navegacion_pasos(self, tramite_id: str) -> None:
+        """Crea los botones Regresar y Continuar/Finalizar.
+        
+        El botón Regresar se deshabilita si estamos en el primer paso.
+        El botón cambia a 'Finalizar' cuando se llega al último paso.
+        """
         barra = tk.Frame(self.contenido, bg=COLORS["white"])
         barra.pack(fill="x", padx=18, pady=(8, 20))
 
@@ -772,14 +960,86 @@ class WanbeApp:
         self.mostrar_tramite(tramite_id, guardar=False)
 
     def finalizar(self, tramite_id: str) -> None:
-        if self.configuracion["confirmar_finalizacion"]:
-            respuesta = messagebox.askyesno("Wanbe", "Se completo la guia. Deseas volver al inicio?")
-            if not respuesta:
-                return
-        self.checklist_listo[tramite_id] = False
-        self.paso_actual[tramite_id] = 0
-        self.historial = ["inicio"]
-        self.mostrar_inicio(guardar=False)
+        """Al terminar todos los pasos, muestra informacion final y pregunta si volver al inicio.
+        
+<<<<<<< main
+        Se puede deshabilitar esta confirmación desde la configuración.
+=======
+        Muestra: proximos pasos, renovacion, contacto y casos especiales.
+        Se puede deshabilitar esta confirmacion desde la configuracion.
+>>>>>>> main
+        """
+        tramite = TRAMITES[tramite_id]
+        self.limpiar()
+        
+        tk.Label(
+            self.contenido,
+            text="✓ Guía completada",
+            bg=COLORS["white"],
+            fg=COLORS["primary"],
+            font=("Helvetica", 18, "bold"),
+        ).pack(anchor="w", padx=18, pady=(14, 4))
+
+        # Proximos pasos
+        if tramite.get("proximos_pasos"):
+            caja = tk.Frame(self.contenido, bg=COLORS["card"], highlightbackground=COLORS["border"], highlightthickness=1)
+            caja.pack(fill="x", padx=18, pady=8)
+            tk.Label(caja, text="Próximos pasos", bg=COLORS["card"], fg=COLORS["text"], font=("Helvetica", 12, "bold")).pack(anchor="w", padx=14, pady=(10, 6))
+            for paso in tramite["proximos_pasos"]:
+                tk.Label(caja, text=f"→ {paso}", bg=COLORS["card"], fg=COLORS["muted"], font=("Helvetica", 9), wraplength=320, justify="left").pack(anchor="w", padx=20, pady=2)
+            tk.Label(caja, text="", bg=COLORS["card"]).pack(pady=2)
+
+        # Renovacion
+        if tramite.get("renovacion"):
+            caja = tk.Frame(self.contenido, bg=COLORS["warning_bg"], highlightbackground=COLORS["warning"], highlightthickness=1)
+            caja.pack(fill="x", padx=18, pady=8)
+            tk.Label(caja, text="📅 Renovación", bg=COLORS["warning_bg"], fg=COLORS["warning"], font=("Helvetica", 12, "bold")).pack(anchor="w", padx=14, pady=(10, 4))
+            renovacion = tramite["renovacion"]
+            if renovacion.get("frecuencia"):
+                tk.Label(caja, text=f"Frecuencia: {renovacion['frecuencia']}", bg=COLORS["warning_bg"], fg=COLORS["warning"], font=("Helvetica", 9)).pack(anchor="w", padx=14, pady=1)
+            if renovacion.get("proceso"):
+                tk.Label(caja, text=f"Proceso: {renovacion['proceso']}", bg=COLORS["warning_bg"], fg=COLORS["warning"], font=("Helvetica", 9), wraplength=320, justify="left").pack(anchor="w", padx=14, pady=1)
+            if renovacion.get("alertas"):
+                tk.Label(caja, text=f"Alertas: {renovacion['alertas']}", bg=COLORS["warning_bg"], fg=COLORS["warning"], font=("Helvetica", 9), wraplength=320, justify="left").pack(anchor="w", padx=14, pady=1)
+            tk.Label(caja, text="", bg=COLORS["warning_bg"]).pack(pady=2)
+
+        # Contacto SAT
+        if tramite.get("contacto_sat"):
+            caja = tk.Frame(self.contenido, bg=COLORS["white"], highlightbackground=COLORS["border"], highlightthickness=1)
+            caja.pack(fill="x", padx=18, pady=8)
+            tk.Label(caja, text="📞 Contacto SAT", bg=COLORS["white"], fg=COLORS["primary"], font=("Helvetica", 12, "bold")).pack(anchor="w", padx=14, pady=(10, 4))
+            contacto = tramite["contacto_sat"]
+            if contacto.get("telefono"):
+                tk.Label(caja, text=f"Teléfono: {contacto['telefono']}", bg=COLORS["white"], fg=COLORS["text"], font=("Helvetica", 9)).pack(anchor="w", padx=14, pady=1)
+            if contacto.get("horario"):
+                tk.Label(caja, text=f"Horario: {contacto['horario']}", bg=COLORS["white"], fg=COLORS["text"], font=("Helvetica", 9)).pack(anchor="w", padx=14, pady=1)
+            if contacto.get("email"):
+                tk.Label(caja, text=f"Email: {contacto['email']}", bg=COLORS["white"], fg=COLORS["text"], font=("Helvetica", 9)).pack(anchor="w", padx=14, pady=(1, 10))
+
+        # Casos especiales
+        if tramite.get("casos_especiales"):
+            caja = tk.Frame(self.contenido, bg=COLORS["card"], highlightbackground=COLORS["border"], highlightthickness=1)
+            caja.pack(fill="x", padx=18, pady=8)
+            tk.Label(caja, text="⚙ Casos especiales", bg=COLORS["card"], fg=COLORS["text"], font=("Helvetica", 12, "bold")).pack(anchor="w", padx=14, pady=(10, 4))
+            casos = tramite["casos_especiales"]
+            for caso, descripcion in casos.items():
+                tk.Label(caja, text=f"• {caso}: ", bg=COLORS["card"], fg=COLORS["text"], font=("Helvetica", 9, "bold")).pack(anchor="w", padx=14, pady=(3, 0))
+                tk.Label(caja, text=descripcion, bg=COLORS["card"], fg=COLORS["muted"], font=("Helvetica", 9), wraplength=310, justify="left").pack(anchor="w", padx=24, pady=(0, 4))
+
+        # Botones finales
+        barra = tk.Frame(self.contenido, bg=COLORS["white"])
+        barra.pack(fill="x", padx=18, pady=(8, 20))
+
+        tk.Button(
+            barra,
+            text="Volver al inicio",
+            command=lambda: self.volver(),
+            bg=COLORS["purple"],
+            fg="white",
+            relief="flat",
+            font=("Helvetica", 11, "bold"),
+            pady=11,
+        ).pack(fill="x")
 
     def mostrar_ayuda(self) -> None:
         texto = (
@@ -788,7 +1048,8 @@ class WanbeApp:
             "- Listas para requisitos y pasos.\n"
             "- Matrices para rutas de navegacion.\n"
             "- Diccionarios para tramites.\n"
-            "- Recursion en el buscador."
+            "- Recursion en el buscador.\n\n"
+            "Guías incluidas: NIT, DPI y calcomanía."
         )
         messagebox.showinfo("Acerca del proyecto", texto)
 
@@ -799,10 +1060,16 @@ class WanbeApp:
             self.root.geometry("430x720")
 
     def mostrar_configuracion(self) -> None:
-        ventana = tk.Toplevel(self.root)
+        """Abre una ventana emergente (Toplevel) con opciones de configuración.
+        
+        Permite:
+        - Cambiar el tamaño de la ventana (compacta o normal)
+        - Habilitar/deshabilitar confirmación al finalizar
+        """
+        ventana = tk.Toplevel(self.root)  # Ventana emergente
         ventana.title("Configuracion")
-        ventana.transient(self.root)
-        ventana.grab_set()
+        ventana.transient(self.root)  # Vincular a la ventana principal
+        ventana.grab_set()  # Hacerla modal (bloquear la principal)
         ventana.configure(bg=COLORS["white"])
         ventana.resizable(False, False)
 
