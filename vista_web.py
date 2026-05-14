@@ -14,7 +14,8 @@ from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 import sys
 
-from proyecto import COLORS, MENU, TRAMITES, buscar_recursivo, encontrar_categoria
+from data import COLORS, MENU, TRAMITES
+from utils import buscar_recursivo, encontrar_categoria
 
 # ========== CONFIGURACIÓN DEL SERVIDOR ==========
 # Este archivo convierte la lógica de proyecto.py en una interfaz web accesible desde el navegador
@@ -38,7 +39,7 @@ def crear_ruta(categoria_id: str) -> str:
 
 
 def crear_ruta_tramite(tramite_id: str) -> str:
-    """Crea una URL para abrir un tramite.
+    """Crea una URL para abrir un trámite.
     
     Ejemplo: crear_ruta_tramite('calcomania') -> '/tramite/calcomania'
     """
@@ -483,13 +484,13 @@ def render_inicio(query: str = "") -> str:
   </div>
 </section>
 <form action="/" method="get">
-  <input name="q" value="{escape(query)}" placeholder="Buscar tramite...">
+  <input name="q" value="{escape(query)}" placeholder="Buscar trámite...">
   <button type="submit">Buscar</button>
 </form>
 {contexto_busqueda}
 <section class="section-title">
   <h2>Guías disponibles</h2>
-  <p>Selecciona el tramite que deseas revisar.</p>
+  <p>Selecciona el trámite que deseas revisar.</p>
 </section>
 {tarjetas}
 """,
