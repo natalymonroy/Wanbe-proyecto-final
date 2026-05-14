@@ -19,10 +19,14 @@ import tkinter as tk
 from tkinter import messagebox
 import unicodedata
 import webbrowser
+import json
 
 
 BASE_DIR = Path(__file__).resolve().parent
 ASSETS_DIR = BASE_DIR / "assets"
+# Directorio para persistencia de estado
+DATA_DIR = BASE_DIR / "data"
+STATE_FILE = DATA_DIR / "state.json"
 #estructira estilo lf
 COLORS = {
     "background": "#eef3ff",
@@ -230,6 +234,36 @@ def normalizar(texto: str) -> str:
     return "".join(letra for letra in texto if unicodedata.category(letra) != "Mn")
 
 
+def cargar_estado() -> dict:
+    """Carga el estado persistido desde `STATE_FILE`.
+
+    Devuelve un diccionario con claves opcionales: `paso_actual`, `checklist_listo`,
+    `configuracion` y `historial`.
+    """
+    try:
+        DATA_DIR.mkdir(parents=True, exist_ok=True)
+        if not STATE_FILE.exists():
+            return {}
+        with STATE_FILE.open("r", encoding="utf-8") as fh:
+            return json.load(fh)
+    except Exception as exc:  # noqa: BLE001 - queremos capturar errores de I/O
+        print("Warning: no se pudo cargar el estado:", exc)
+        return {}
+
+
+def guardar_estado(estado: dict) -> None:
+    """Guarda el `estado` en formato JSON en `STATE_FILE`.
+
+    No lanza excepciones; imprime un warning en caso de fallo.
+    """
+    try:
+        DATA_DIR.mkdir(parents=True, exist_ok=True)
+        with STATE_FILE.open("w", encoding="utf-8") as fh:
+            json.dump(estado, fh, ensure_ascii=False, indent=2)
+    except Exception as exc:
+        print("Warning: no se pudo guardar el estado:", exc)
+
+
 def buscar_recursivo(nodos: list[dict], consulta: str, ruta: str = "") -> list[dict]:
     """Busca tramites dentro del arbol MENU usando recursion."""
     resultados = []
@@ -296,11 +330,20 @@ class WanbeApp:
             "ventana_compacta": False,
             "confirmar_finalizacion": True,
         }
+        # Intentar cargar estado persistido y mezclar con los valores por defecto
+        estado = cargar_estado()
+        if isinstance(estado, dict):
+            self.paso_actual.update(estado.get("paso_actual", {}))
+            self.checklist_listo.update(estado.get("checklist_listo", {}))
+            self.configuracion.update(estado.get("configuracion", {}))
+            self.historial = estado.get("historial", self.historial)
         self.imagenes = {}
 
         self.construir_base()
         self.aplicar_configuracion()
         self.mostrar_inicio()
+        # Guardar estado al cerrar la ventana
+        self.root.protocol("WM_DELETE_WINDOW", self._on_close)
 
     def construir_base(self) -> None:
         self.marco_app = tk.Frame(self.root, bg=COLORS["white"])
@@ -698,6 +741,14 @@ class WanbeApp:
         self.checklist_listo[tramite_id] = True
         self.paso_actual[tramite_id] = 0
         self.mostrar_tramite(tramite_id, guardar=False)
+        guardar_estado(
+            {
+                "paso_actual": self.paso_actual,
+                "checklist_listo": self.checklist_listo,
+                "configuracion": self.configuracion,
+                "historial": self.historial,
+            }
+        )
 
     def mostrar_paso(self, tramite_id: str) -> None:
         tramite = TRAMITES[tramite_id]
@@ -786,6 +837,14 @@ class WanbeApp:
         total = len(TRAMITES[tramite_id]["pasos"])
         self.paso_actual[tramite_id] = max(0, min(total - 1, self.paso_actual[tramite_id] + cambio))
         self.mostrar_tramite(tramite_id, guardar=False)
+        guardar_estado(
+            {
+                "paso_actual": self.paso_actual,
+                "checklist_listo": self.checklist_listo,
+                "configuracion": self.configuracion,
+                "historial": self.historial,
+            }
+        )
 
     def finalizar(self, tramite_id: str) -> None:
         if self.configuracion["confirmar_finalizacion"]:
@@ -796,6 +855,14 @@ class WanbeApp:
         self.paso_actual[tramite_id] = 0
         self.historial = ["inicio"]
         self.mostrar_inicio(guardar=False)
+        guardar_estado(
+            {
+                "paso_actual": self.paso_actual,
+                "checklist_listo": self.checklist_listo,
+                "configuracion": self.configuracion,
+                "historial": self.historial,
+            }
+        )
 
     def mostrar_ayuda(self) -> None:
         texto = (
@@ -873,6 +940,14 @@ class WanbeApp:
             self.configuracion["confirmar_finalizacion"] = confirmar_finalizacion.get()
             self.aplicar_configuracion()
             ventana.destroy()
+            guardar_estado(
+                {
+                    "paso_actual": self.paso_actual,
+                    "checklist_listo": self.checklist_listo,
+                    "configuracion": self.configuracion,
+                    "historial": self.historial,
+                }
+            )
             messagebox.showinfo("Configuracion", "Cambios guardados correctamente.")
 
         tk.Button(
@@ -901,6 +976,21 @@ class WanbeApp:
 
     def ejecutar(self) -> None:
         self.root.mainloop()
+
+    def _on_close(self) -> None:
+        """Handler para el cierre de la aplicacion: persiste estado y destruye la ventana."""
+        try:
+            guardar_estado(
+                {
+                    "paso_actual": self.paso_actual,
+                    "checklist_listo": self.checklist_listo,
+                    "configuracion": self.configuracion,
+                    "historial": self.historial,
+                }
+            )
+        except Exception:
+            pass
+        self.root.destroy()
 
 
 if __name__ == "__main__":
