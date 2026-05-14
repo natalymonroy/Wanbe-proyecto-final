@@ -43,3 +43,36 @@ Luego abrir:
 ```text
 http://127.0.0.1:8000
 ```
+
+## Instalación y dependencias
+
+Instala las dependencias mínimas (solo necesarias si vas a extraer PDFs u otras tareas):
+
+```bash
+python3 -m pip install -r requirements.txt
+```
+
+## Persistencia de estado
+
+La aplicación guarda un archivo JSON en `data/state.json` con el estado de la sesión (paso actual, checklist, configuración e historial). Si el archivo no existe, se crea automáticamente.
+
+Si quieres reiniciar el estado, borra `data/state.json` y vuelve a arrancar la app.
+
+## Mapeo rápido a la rúbrica
+
+- POO: clase `WanbeApp` en `app.py`.
+- Funciones: utilidades en `utils.py` (`normalizar`, `buscar_recursivo`, `encontrar_categoria`) y persistencia en `data.py` (`cargar_estado`, `guardar_estado`).
+- Estructuras de datos: `TRAMITES` y `MENU` en `data.py` (diccionarios y listas).
+- Manejo de archivos: lectura/escritura JSON en `data/state.json` (con try/except).
+- Recursión: `buscar_recursivo` y `encontrar_categoria`.
+- Tests: pendientes (se recomienda `pytest` para funciones puras y persistencia).
+
+## Sugerencia de commit
+
+Commit propuesto para estos cambios:
+
+```
+git add .
+git commit -m "Refactor: separar en módulos (data, utils, app), añadir persistencia JSON y vista web ajustada"
+```
+
