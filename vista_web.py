@@ -39,7 +39,7 @@ def crear_ruta(categoria_id: str) -> str:
 
 
 def crear_ruta_tramite(tramite_id: str) -> str:
-    """Crea una URL para abrir un tramite.
+    """Crea una URL para abrir un trámite.
     
     Ejemplo: crear_ruta_tramite('calcomania') -> '/tramite/calcomania'
     """
@@ -302,13 +302,13 @@ def render_inicio(query: str = "") -> str:
   <h1>¿En qué trámite te guiamos hoy?</h1>
 </section>
 <form action="/" method="get">
-  <input name="q" value="{escape(query)}" placeholder="Buscar tramite...">
+  <input name="q" value="{escape(query)}" placeholder="Buscar trámite...">
   <button type="submit">Buscar</button>
 </form>
 {contexto_busqueda}
 <section class="section-title">
   <h2>Guías disponibles</h2>
-  <p>Selecciona el tramite que deseas revisar.</p>
+  <p>Selecciona el trámite que deseas revisar.</p>
 </section>
 {tarjetas}
 """,

@@ -19,10 +19,10 @@ El proyecto se centra solo en tres guías:
 ## Temas de Python usados
 
 - Listas para requisitos y pasos.
-- Matrices para rutas de navegacion.
-- Diccionarios para guardar la informacion de tramites.
-- Recursion en el buscador y en la busqueda de categorias.
-- Interfaz grafica con `tkinter`.
+- Matrices para rutas de navegación.
+- Diccionarios para guardar la información de trámites.
+- Recursión en el buscador y en la búsqueda de categorías.
+- Interfaz gráfica con `tkinter`.
 
 ## Ejecutar
 

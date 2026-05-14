@@ -8,13 +8,13 @@ from data import TRAMITES
 
 
 def normalizar(texto: str) -> str:
-    """Convierte texto a minusculas y elimina tildes para mejorar busquedas."""
+    """Convierte texto a minúsculas y elimina tildes para mejorar búsquedas."""
     texto = unicodedata.normalize("NFD", texto.lower())
     return "".join(letra for letra in texto if unicodedata.category(letra) != "Mn")
 
 
 def buscar_recursivo(nodos: List[Dict], consulta: str, ruta: str = "") -> List[Dict]:
-    """Busca tramites dentro del arbol MENU usando recursion."""
+    """Busca trámites dentro del árbol MENU usando recursión."""
     resultados = []
     consulta = normalizar(consulta)
 
@@ -54,7 +54,7 @@ def buscar_recursivo(nodos: List[Dict], consulta: str, ruta: str = "") -> List[D
 
 
 def encontrar_categoria(nodos: List[Dict], categoria_id: str) -> Dict | None:
-    """Encuentra una categoria dentro del arbol usando recursion."""
+    """Encuentra una categoría dentro del árbol usando recursión."""
     for nodo in nodos:
         if nodo.get("id") == categoria_id:
             return nodo

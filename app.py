@@ -270,7 +270,7 @@ class WanbeApp:
         hero.pack(fill="x", padx=18, pady=(14, 12))
         tk.Label(
             hero,
-            text="En que tramite te guiamos hoy?",
+            text="¿En qué trámite te guiamos hoy?",
             bg=COLORS["primary"],
             fg="white",
             font=("Helvetica", 19, "bold"),
@@ -280,7 +280,7 @@ class WanbeApp:
         ).pack(fill="x", padx=16, pady=(20, 4))
         tk.Label(
             hero,
-            text="Guia visual sencilla para tramites de SAT y RENAP.",
+            text="Guía visual sencilla para trámites de SAT y RENAP.",
             bg=COLORS["primary"],
             fg="#dbeafe",
             font=("Helvetica", 10),
@@ -291,7 +291,7 @@ class WanbeApp:
 
         busqueda = tk.Entry(self.contenido, font=("Helvetica", 12), relief="flat", bg=COLORS["card"], fg=COLORS["text"])
         busqueda.pack(fill="x", padx=18, pady=(0, 10), ipady=10)
-        busqueda.insert(0, "Buscar tramite...")
+        busqueda.insert(0, "Buscar trámite...")
 
         resultados = tk.Frame(self.contenido, bg=COLORS["white"])
         resultados.pack(fill="x")
@@ -306,7 +306,7 @@ class WanbeApp:
             texto = busqueda.get().strip()
             for widget in resultados.winfo_children():
                 widget.destroy()
-            if not texto or texto == "Buscar tramite...":
+            if not texto or texto == "Buscar trámite...":
                 pintar_menu()
                 return
             encontrados = buscar_recursivo(MENU, texto)
@@ -324,7 +324,7 @@ class WanbeApp:
                 )
 
         def limpiar_placeholder(_evento: tk.Event) -> None:
-            if busqueda.get() == "Buscar tramite...":
+            if busqueda.get() == "Buscar trámite...":
                 busqueda.delete(0, "end")
 
         busqueda.bind("<FocusIn>", limpiar_placeholder)
@@ -359,7 +359,7 @@ class WanbeApp:
 
         categoria = encontrar_categoria(MENU, categoria_id)
         if categoria is None:
-            self.mensaje_en(self.contenido, "Error", "No se encontro la categoria.")
+            self.mensaje_en(self.contenido, "Error", "No se encontró la categoría.")
             return
 
         self.actualizar_header(categoria["titulo"])
@@ -401,7 +401,7 @@ class WanbeApp:
         tk.Label(caja, text="Antes de empezar", bg=COLORS["card"], fg=COLORS["text"], font=("Helvetica", 14, "bold")).pack(anchor="w", padx=14, pady=(14, 4))
         tk.Label(
             caja,
-            text="Marca los documentos que ya tienes para iniciar la guia.",
+            text="Marca los documentos que ya tienes para iniciar la guía.",
             bg=COLORS["card"],
             fg=COLORS["muted"],
             font=("Helvetica", 10),
@@ -615,9 +615,9 @@ class WanbeApp:
             "Proyecto Python sencillo de Wanbe.\n\n"
             "Incluye:\n"
             "- Listas para requisitos y pasos.\n"
-            "- Matrices para rutas de navegacion.\n"
-            "- Diccionarios para tramites.\n"
-            "- Recursion en el buscador."
+            "- Matrices para rutas de navegación.\n"
+            "- Diccionarios para trámites.\n"
+            "- Recursión en el buscador."
         )
         messagebox.showinfo("Acerca del proyecto", texto)
 
@@ -629,7 +629,7 @@ class WanbeApp:
 
     def mostrar_configuracion(self) -> None:
         ventana = tk.Toplevel(self.root)
-        ventana.title("Configuracion")
+        ventana.title("Configuración")
         ventana.transient(self.root)
         ventana.grab_set()
         ventana.configure(bg=COLORS["white"])
@@ -637,7 +637,7 @@ class WanbeApp:
 
         tk.Label(
             ventana,
-            text="Preferencias de la aplicacion",
+            text="Preferencias de la aplicación",
             bg=COLORS["white"],
             fg=COLORS["primary"],
             font=("Helvetica", 13, "bold"),
@@ -669,7 +669,7 @@ class WanbeApp:
 
         tk.Checkbutton(
             ventana,
-            text="Confirmar al finalizar un tramite",
+            text="Confirmar al finalizar un trámite",
             variable=confirmar_finalizacion,
             bg=COLORS["white"],
             fg=COLORS["text"],
@@ -695,7 +695,7 @@ class WanbeApp:
                         "historial": self.historial,
                     }
                 )
-                messagebox.showinfo("Configuracion", "Cambios guardados correctamente.")
+                messagebox.showinfo("Configuración", "Cambios guardados correctamente.")
             except Exception as exc:
                 messagebox.showerror("Error", f"No se pudo guardar la configuración:\n{exc}")
 

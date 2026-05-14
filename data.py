@@ -30,10 +30,10 @@ COLORS = {
 }
 
 RUTAS = [
-    ["Inicio", "SAT", "Vehiculos", "Pago de Calcomanía"],
+    ["Inicio", "SAT", "Vehículos", "Pago de Calcomanía"],
     ["Inicio", "SAT", "Individuales", "Solicitud de NIT"],
-    ["Inicio", "RENAP", "Tramite de DPI"],
-    ["Inicio", "RENAP", "Certificados en Linea"],
+    ["Inicio", "RENAP", "Trámite de DPI"],
+    ["Inicio", "RENAP", "Certificados en línea"],
 ]
 
 TRAMITES = {
@@ -41,18 +41,18 @@ TRAMITES = {
         "titulo": "Pago de Calcomanía",
         "portal": "SAT",
         "icono": "CAR",
-        "descripcion": "Pago del Impuesto Sobre Circulacion de Vehiculos.",
+        "descripcion": "Pago del Impuesto Sobre Circulación de Vehículos.",
         "requisitos": ["Placa del vehiculo", "NIT del propietario"],
         "pasos": [
             {
-                "titulo": "Revisa datos del vehiculo",
+                "titulo": "Revisa datos del vehículo",
                 "texto": "Antes de iniciar, ten claros los datos que la SAT pedira para generar el formulario.",
                 "items": ["Confirma la placa.", "Confirma el NIT del propietario.", "Ten acceso a Declaraguate."],
             },
             {
                 "titulo": "Genera formulario SAT-4091",
-                "texto": "Ingresa a Declaraguate y genera el formulario de vehiculos.",
-                "items": ["Busca la seccion Vehiculos.", "Ingresa NIT y placa.", "Valida y congela."],
+                "texto": "Ingresa a Declaraguate y genera el formulario de vehículos.",
+                "items": ["Busca la sección Vehículos.", "Ingresa NIT y placa.", "Valida y congela."],
                 "enlace": "https://declaraguate.sat.gob.gt/declaraguate-web/",
             },
             {
@@ -72,33 +72,33 @@ TRAMITES = {
         "titulo": "Solicitud de NIT",
         "portal": "SAT",
         "icono": "NIT",
-        "descripcion": "Solicitud electronica para obtener NIT por primera vez.",
+        "descripcion": "Solicitud electrónica para obtener NIT por primera vez.",
         "requisitos": ["DPI vigente", "Recibo de luz o agua", "Correo electronico"],
         "pasos": [
             {
                 "titulo": "Abre portal SAT",
-                "texto": "Inicia en el portal oficial de Solicitud Electronica de NIT.",
+                "texto": "Inicia en el portal oficial de Solicitud Electrónica de NIT.",
                 "items": ["Completa captcha.", "Escribe tu correo.", "Solicita el enlace."],
                 "enlace": "https://portal.sat.gob.gt/portal/solicitud-electronica-de-nit/",
             },
             {
                 "titulo": "Valida correo",
                 "texto": "Busca en tu correo el mensaje enviado por SAT.",
-                "items": ["Revisa bandeja principal.", "Revisa spam.", "Copia el codigo recibido."],
+                "items": ["Revisa bandeja principal.", "Revisa spam.", "Copia el código recibido."],
             },
             {
                 "titulo": "Datos personales",
-                "texto": "Llena DPI, numero de serie y datos solicitados.",
-                "items": ["El numero de serie esta atras del DPI.", "Sube documentos legibles."],
+                "texto": "Llena DPI, número de serie y datos solicitados.",
+                "items": ["El número de serie está atrás del DPI.", "Sube documentos legibles."],
             },
             {
-                "titulo": "Actividad economica",
+                "titulo": "Actividad económica",
                 "texto": "Elige si eres asalariado, no tienes obligaciones o tienes negocio.",
                 "items": ["Si no trabajas, elige sin obligaciones.", "Si facturas, elige negocio."],
             },
             {
                 "titulo": "Enviar solicitud",
-                "texto": "Revisa toda la informacion antes de finalizar.",
+                "texto": "Revisa toda la información antes de finalizar.",
                 "items": ["Confirma datos.", "Guarda usuario y clave.", "Espera respuesta por correo."],
             },
         ],
