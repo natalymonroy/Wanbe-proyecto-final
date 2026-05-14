@@ -205,6 +205,132 @@ def render_layout(titulo: str, contenido: str) -> str:
     }}
     .panel h3 {{ margin: 0 0 8px; font-size: 16px; }}
     .panel p, li {{ color: var(--muted); font-size: 13px; line-height: 1.45; }}
+    .notice {{
+      padding: 12px 14px;
+      margin: 0 0 12px;
+      border-radius: 14px;
+      background: rgba(24, 52, 153, 0.08);
+      color: var(--primary);
+      border: 1px solid rgba(24, 52, 153, 0.16);
+      font-size: 13px;
+    }}
+    .progress {{
+      width: 100%;
+      height: 10px;
+      margin: 10px 0 14px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(100, 116, 139, 0.16);
+    }}
+    .progress span {{
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--purple), var(--primary));
+    }}
+    .step-nav {{
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }}
+    .completion-hero {{
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 14px;
+      border-radius: 22px;
+      padding: 26px 16px 22px;
+      text-align: center;
+      color: white;
+      background: linear-gradient(140deg, #0f766e 0%, #0891b2 52%, #1d4ed8 100%);
+      box-shadow: 0 16px 34px rgba(14, 116, 144, 0.28);
+      animation: panel-reveal 420ms ease-out;
+    }}
+    .completion-hero::before {{
+      content: "";
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      border-radius: 999px;
+      top: -60px;
+      right: -40px;
+      background: rgba(255, 255, 255, 0.14);
+    }}
+    .completion-hero::after {{
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 8% 18%, rgba(255, 255, 255, 0.7) 0 3px, transparent 3.2px),
+        radial-gradient(circle at 22% 72%, rgba(186, 230, 253, 0.88) 0 2.5px, transparent 2.7px),
+        radial-gradient(circle at 38% 28%, rgba(134, 239, 172, 0.88) 0 2.5px, transparent 2.7px),
+        radial-gradient(circle at 56% 82%, rgba(255, 255, 255, 0.72) 0 2.2px, transparent 2.4px),
+        radial-gradient(circle at 74% 30%, rgba(125, 211, 252, 0.88) 0 2.8px, transparent 3px),
+        radial-gradient(circle at 90% 66%, rgba(190, 242, 100, 0.82) 0 2.3px, transparent 2.5px);
+      opacity: 0.65;
+      animation: confetti-drift 2200ms ease-in-out infinite alternate;
+      pointer-events: none;
+    }}
+    .completion-check {{
+      width: 124px;
+      height: 124px;
+      margin: 0 auto 14px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      font-size: 66px;
+      font-weight: 900;
+      background: radial-gradient(circle at 35% 28%, #bbf7d0 0%, #22c55e 62%, #15803d 100%);
+      box-shadow: 0 18px 28px rgba(21, 128, 61, 0.36), inset 0 2px 5px rgba(255, 255, 255, 0.4);
+      animation: check-pop 560ms ease-out;
+      position: relative;
+      z-index: 1;
+    }}
+    .completion-title {{
+      margin: 0;
+      font-size: 35px;
+      line-height: 1.06;
+      letter-spacing: -0.5px;
+      position: relative;
+      z-index: 1;
+    }}
+    .completion-subtitle {{
+      margin: 8px 0 0;
+      color: #d1fae5;
+      font-size: 14px;
+      line-height: 1.4;
+      position: relative;
+      z-index: 1;
+    }}
+    .completion-chip {{
+      display: inline-flex;
+      margin-top: 12px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      position: relative;
+      z-index: 1;
+    }}
+    @keyframes check-pop {{
+      0% {{ transform: scale(0.45); opacity: 0; }}
+      65% {{ transform: scale(1.08); opacity: 1; }}
+      100% {{ transform: scale(1); opacity: 1; }}
+    }}
+    @keyframes panel-reveal {{
+      0% {{ transform: translateY(8px); opacity: 0; }}
+      100% {{ transform: translateY(0); opacity: 1; }}
+    }}
+    @keyframes confetti-drift {{
+      0% {{ transform: translateY(0) scale(1); opacity: 0.52; }}
+      100% {{ transform: translateY(6px) scale(1.03); opacity: 0.76; }}
+    }}
+    .secondary {{ background: var(--card); color: var(--text); border: 1px solid var(--border); }}
+    .warning {{ background: var(--warning-bg); border-color: rgba(146, 64, 14, 0.25); }}
+    .warning h4 {{ margin: 0 0 8px; color: var(--warning); font-size: 14px; }}
+    .info {{ background: #f0f5ff; border-color: rgba(24, 52, 153, 0.16); }}
     .step {{ background: var(--white); }}
     .step-number {{ color: var(--purple); font-weight: 800; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }}
     .requirements {{ background: var(--warning-bg); border-color: rgba(146, 64, 14, 0.25); }}
@@ -213,6 +339,8 @@ def render_layout(titulo: str, contenido: str) -> str:
       .phone {{ width: min(100% - 12px, 440px); margin: 6px auto; border-radius: 20px; }}
       main {{ padding: 12px; }}
       .hero h1 {{ font-size: 21px; }}
+      .completion-title {{ font-size: 25px; }}
+      .completion-check {{ width: 94px; height: 94px; font-size: 50px; }}
       form {{ flex-direction: column; }}
     }}
   </style>
@@ -381,9 +509,11 @@ def render_tramite_resumen(tramite_id: str) -> str:
 
     contenido_html = f"""
 <a class="button back" href="/">Volver</a>
-<section class="section-title">
-  <h2>✓ Guía completada: {escape(tramite["titulo"])}</h2>
-  <p>Has terminado todos los pasos de esta guía.</p>
+<section class="completion-hero">
+  <div class="completion-check">&#10003;</div>
+  <h2 class="completion-title">¡Guía completada!</h2>
+  <p class="completion-subtitle">Terminaste con éxito el trámite de {escape(tramite["titulo"])}.</p>
+  <div class="completion-chip">100% completado</div>
 </section>
 """
 
@@ -469,14 +599,8 @@ def render_tramite(tramite_id: str, paso_actual: int = 1) -> str:
     Muestra:
     - Información del tramite (tiempo, costo, vigencia)
     - Barra de progreso con porcentaje
-<<<<<<< main
     - Título y descripción del paso
     - Lista de ítems/instrucciones
-=======
-    - Titulo y descripcion del paso
-    - Tiempo estimado y errores comunes del paso
-    - Lista de items/instrucciones
->>>>>>> main
     - Enlace oficial si existe
     - Botones para ir al paso anterior/siguiente
     - Al final: proximos pasos, renovacion, contacto y casos especiales
