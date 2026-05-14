@@ -184,18 +184,50 @@ MENU = [
 ]
 
 
+import shutil
+import tempfile
+from datetime import datetime
+from json import JSONDecodeError
+
+
 def cargar_estado() -> dict:
     """Carga el estado persistido desde `STATE_FILE`.
 
     Devuelve un diccionario con claves opcionales: `paso_actual`, `checklist_listo`,
     `configuracion` y `historial`.
+
+    Si el JSON está corrupto, el archivo se respalda como `state.json.corrupt.TIMESTAMP`
+    y se devuelve un dict vacío para no romper la aplicación.
     """
     try:
         DATA_DIR.mkdir(parents=True, exist_ok=True)
         if not STATE_FILE.exists():
             return {}
         with STATE_FILE.open("r", encoding="utf-8") as fh:
-            return json.load(fh)
+            raw = fh.read()
+        try:
+            estado = json.loads(raw)
+        except JSONDecodeError as exc:
+            # Respaldar archivo corrupto y devolver estado vacío
+            ts = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
+            backup = STATE_FILE.with_name(f"state.json.corrupt.{ts}")
+            try:
+                shutil.move(str(STATE_FILE), str(backup))
+                print(f"Warning: state.json corrupto; se movió a {backup}")
+            except Exception:
+                print("Warning: state.json corrupto y no se pudo mover el archivo de respaldo", exc)
+            return {}
+
+        # Validar estructura mínima esperada
+        if not isinstance(estado, dict):
+            return {}
+
+        paso_actual = estado.get("paso_actual", {})
+        checklist = estado.get("checklist_listo", {})
+        if not isinstance(paso_actual, dict) or not isinstance(checklist, dict):
+            return {}
+
+        return estado
     except Exception as exc:  # noqa: BLE001 - queremos capturar errores de I/O
         print("Warning: no se pudo cargar el estado:", exc)
         return {}
@@ -204,11 +236,24 @@ def cargar_estado() -> dict:
 def guardar_estado(estado: dict) -> None:
     """Guarda el `estado` en formato JSON en `STATE_FILE`.
 
-    No lanza excepciones; imprime un warning en caso de fallo.
+    Escritura atómica: se escribe en un fichero temporal en el mismo directorio
+    y luego se reemplaza el `state.json` para evitar archivos parcialmente escritos.
     """
     try:
         DATA_DIR.mkdir(parents=True, exist_ok=True)
-        with STATE_FILE.open("w", encoding="utf-8") as fh:
-            json.dump(estado, fh, ensure_ascii=False, indent=2)
+        # Escritura atómica: escribir en fichero temporal y mover
+        dirpath = STATE_FILE.parent
+        with tempfile.NamedTemporaryFile("w", encoding="utf-8", dir=str(dirpath), delete=False) as tmp:
+            json.dump(estado, tmp, ensure_ascii=False, indent=2)
+            tmp_path = Path(tmp.name)
+        try:
+            tmp_path.replace(STATE_FILE)
+        except Exception:
+            # fallback: intentar copiar y remover temporal
+            try:
+                shutil.copy(str(tmp_path), str(STATE_FILE))
+                tmp_path.unlink(missing_ok=True)
+            except Exception as exc:
+                print("Warning: no se pudo guardar el estado (fallback):", exc)
     except Exception as exc:
         print("Warning: no se pudo guardar el estado:", exc)
