@@ -14,7 +14,8 @@ from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 import sys
 
-from proyecto import COLORS, MENU, TRAMITES, buscar_recursivo, encontrar_categoria
+from data import COLORS, MENU, TRAMITES
+from utils import buscar_recursivo, encontrar_categoria
 
 # ========== CONFIGURACIÓN DEL SERVIDOR ==========
 # Este archivo convierte la lógica de proyecto.py en una interfaz web accesible desde el navegador

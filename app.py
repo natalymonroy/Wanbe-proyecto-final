@@ -1,40 +1,266 @@
 #!/usr/bin/env python3
-"""
-Wanbe - Proyecto final en Python
-
-Aplicacion de escritorio sencilla inspirada en la app web original.
-Usa tkinter, por lo que no necesita instalar librerias externas.
-
-Temas de programacion aplicados:
-- Listas: pasos y requisitos de cada tramite.
-- Matrices: rutas principales de la aplicacion.
-- Diccionarios: base de datos de tramites.
-- Recursion: buscador dentro del arbol de categorias.
-"""
-
+"""Módulo principal con la clase `WanbeApp` que implementa la GUI de escritorio."""
 from __future__ import annotations
 
-from pathlib import Path
 import tkinter as tk
 from tkinter import messagebox
-#!/usr/bin/env python3
-"""Launcher backward-compatible para la aplicación Wanbe.
+import webbrowser
 
-Este archivo mantiene el mismo entrypoint `python proyecto.py` pero
-delegando la implementación a `app.py` y los datos a `data.py`.
-"""
-from __future__ import annotations
-
-from app import WanbeApp
+from data import ASSETS_DIR, COLORS, TRAMITES, MENU, cargar_estado, guardar_estado
+from utils import buscar_recursivo, encontrar_categoria
 
 
-def main() -> None:
-    app = WanbeApp()
-    app.ejecutar()
+class WanbeApp:
+    def __init__(self) -> None:
+        self.root = tk.Tk()
+        self.root.title("Wanbe - Proyecto Final")
+        self.root.geometry("430x720")
+        self.root.minsize(390, 620)
+        self.root.configure(bg=COLORS["background"])
 
+        self.historial = ["inicio"]
+        self.paso_actual = {clave: 0 for clave in TRAMITES}
+        self.checklist_listo = {clave: False for clave in TRAMITES}
+        self.configuracion = {
+            "ventana_compacta": False,
+            "confirmar_finalizacion": True,
+        }
+        self.imagenes = {}
 
-if __name__ == "__main__":
-    main()
+        # Intentar cargar estado persistido y mezclar con los valores por defecto
+        estado = cargar_estado()
+        if isinstance(estado, dict):
+            self.paso_actual.update(estado.get("paso_actual", {}))
+            self.checklist_listo.update(estado.get("checklist_listo", {}))
+            self.configuracion.update(estado.get("configuracion", {}))
+            self.historial = estado.get("historial", self.historial)
+
+        self.construir_base()
+        self.aplicar_configuracion()
+        self.mostrar_inicio()
+        # Guardar estado al cerrar la ventana
+        self.root.protocol("WM_DELETE_WINDOW", self._on_close)
+
+    def construir_base(self) -> None:
+        self.marco_app = tk.Frame(self.root, bg=COLORS["white"])
+        self.marco_app.pack(fill="both", expand=True, padx=10, pady=10)
+
+        self.header = tk.Frame(self.marco_app, bg=COLORS["white"], height=70)
+        self.header.pack(fill="x")
+        self.header.pack_propagate(False)
+
+        self.boton_atras = tk.Button(
+            self.header,
+            text="<",
+            command=self.volver,
+            bg=COLORS["card"],
+            fg=COLORS["text"],
+            relief="flat",
+            width=3,
+            font=("Helvetica", 14, "bold"),
+        )
+        self.boton_atras.pack(side="left", padx=(12, 6), pady=16)
+
+        logo = self.cargar_imagen("logo.png", 45)
+        if logo:
+            tk.Label(self.header, image=logo, bg=COLORS["white"]).pack(side="left", padx=(0, 6))
+
+        titulo = tk.Frame(self.header, bg=COLORS["white"])
+        titulo.pack(side="left", fill="y", pady=12)
+        tk.Label(
+            titulo,
+            text="WANBE",
+            bg=COLORS["white"],
+            fg=COLORS["primary"],
+            font=("Helvetica", 18, "bold"),
+        ).pack(anchor="w")
+        self.subtitulo_header = tk.Label(
+            titulo,
+            text="Inicio",
+            bg=COLORS["white"],
+            fg=COLORS["muted"],
+            font=("Helvetica", 9, "bold"),
+        )
+        self.subtitulo_header.pack(anchor="w")
+
+        tk.Button(
+            self.header,
+            text="?",
+            command=self.mostrar_ayuda,
+            bg=COLORS["card"],
+            fg=COLORS["text"],
+            relief="flat",
+            width=3,
+            font=("Helvetica", 13, "bold"),
+        ).pack(side="right", padx=12, pady=16)
+
+        tk.Button(
+            self.header,
+            text="Config",
+            command=self.mostrar_configuracion,
+            bg=COLORS["card"],
+            fg=COLORS["text"],
+            relief="flat",
+            font=("Helvetica", 10, "bold"),
+            padx=10,
+        ).pack(side="right", padx=(0, 6), pady=16)
+
+        self.canvas = tk.Canvas(self.marco_app, bg=COLORS["white"], highlightthickness=0)
+        self.canvas.pack(side="left", fill="both", expand=True)
+
+        scroll = tk.Scrollbar(self.marco_app, orient="vertical", command=self.canvas.yview)
+        scroll.pack(side="right", fill="y")
+        self.canvas.configure(yscrollcommand=scroll.set)
+
+        self.contenido = tk.Frame(self.canvas, bg=COLORS["white"])
+        self.ventana_contenido = self.canvas.create_window((0, 0), window=self.contenido, anchor="nw")
+
+        self.contenido.bind("<Configure>", lambda _e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
+        self.canvas.bind("<Configure>", lambda e: self.canvas.itemconfigure(self.ventana_contenido, width=e.width))
+        self.root.bind_all("<MouseWheel>", self.mover_scroll)
+
+    def cargar_imagen(self, archivo: str, tamano: int) -> tk.PhotoImage | None:
+        ruta = ASSETS_DIR / archivo
+        if not ruta.exists():
+            return None
+        try:
+            imagen = tk.PhotoImage(file=str(ruta))
+            factor = max(1, imagen.width() // tamano, imagen.height() // tamano)
+            imagen = imagen.subsample(factor, factor)
+            self.imagenes[archivo] = imagen
+            return imagen
+        except tk.TclError:
+            return None
+
+    def mover_scroll(self, evento: tk.Event) -> None:
+        self.canvas.yview_scroll(int(-1 * (evento.delta / 120)), "units")
+
+    def limpiar(self) -> None:
+        for widget in self.contenido.winfo_children():
+            widget.destroy()
+        self.canvas.yview_moveto(0)
+
+    def cambiar_pantalla(self, pantalla: str, guardar: bool = True) -> None:
+        if guardar and self.historial[-1] != pantalla:
+            self.historial.append(pantalla)
+
+        if pantalla == "inicio":
+            self.mostrar_inicio(guardar=False)
+        elif pantalla in TRAMITES:
+            self.mostrar_tramite(pantalla, guardar=False)
+        else:
+            self.mostrar_categoria(pantalla, guardar=False)
+
+    def volver(self) -> None:
+        if len(self.historial) <= 1:
+            return
+        self.historial.pop()
+        self.cambiar_pantalla(self.historial[-1], guardar=False)
+
+    def actualizar_header(self, texto: str) -> None:
+        self.subtitulo_header.configure(text=texto)
+        estado = "normal" if len(self.historial) > 1 else "disabled"
+        self.boton_atras.configure(state=estado)
+
+    def titulo_seccion(self, titulo: str, subtitulo: str = "") -> None:
+        caja = tk.Frame(self.contenido, bg=COLORS["white"])
+        caja.pack(fill="x", padx=18, pady=(14, 8))
+        tk.Label(
+            caja,
+            text=titulo,
+            bg=COLORS["white"],
+            fg=COLORS["primary"],
+            font=("Helvetica", 18, "bold"),
+            anchor="w",
+            justify="left",
+            wraplength=340,
+        ).pack(fill="x")
+        if subtitulo:
+            tk.Label(
+                caja,
+                text=subtitulo,
+                bg=COLORS["white"],
+                fg=COLORS["muted"],
+                font=("Helvetica", 10),
+                anchor="w",
+                justify="left",
+                wraplength=340,
+            ).pack(fill="x", pady=(3, 0))
+
+    def tarjeta(self, titulo: str, subtitulo: str, icono: str, comando, color: str = COLORS["primary"]) -> None:
+        tarjeta = tk.Frame(
+            self.contenido,
+            bg=COLORS["white"],
+            highlightbackground=COLORS["border"],
+            highlightthickness=1,
+        )
+        tarjeta.pack(fill="x", padx=18, pady=7)
+
+        tk.Label(
+            tarjeta,
+            text=icono,
+            bg=color,
+            fg="white",
+            width=4,
+            font=("Helvetica", 11, "bold"),
+        ).pack(side="left", padx=12, pady=14)
+
+        textos = tk.Frame(tarjeta, bg=COLORS["white"])
+        textos.pack(side="left", fill="both", expand=True, pady=12)
+
+        tk.Label(
+            textos,
+            text=titulo,
+            bg=COLORS["white"],
+            fg=COLORS["text"],
+            font=("Helvetica", 13, "bold"),
+            anchor="w",
+            justify="left",
+            wraplength=250,
+        ).pack(fill="x")
+        tk.Label(
+            textos,
+            text=subtitulo,
+            bg=COLORS["white"],
+            fg=COLORS["muted"],
+            font=("Helvetica", 9),
+            anchor="w",
+            justify="left",
+            wraplength=250,
+        ).pack(fill="x", pady=(2, 0))
+
+        tk.Label(tarjeta, text=">", bg=COLORS["white"], fg=color, font=("Helvetica", 15, "bold")).pack(side="right", padx=12)
+
+        for widget in [tarjeta, *tarjeta.winfo_children(), *textos.winfo_children()]:
+            widget.bind("<Button-1>", lambda _e: comando())
+            widget.configure(cursor="hand2")
+
+    def boton(self, texto: str, comando, color: str = COLORS["primary"], estado: str = "normal") -> tk.Button:
+        boton = tk.Button(
+            self.contenido,
+            text=texto,
+            command=comando,
+            state=estado,
+            bg=color,
+            fg="white",
+            relief="flat",
+            font=("Helvetica", 11, "bold"),
+            padx=12,
+            pady=10,
+        )
+        boton.pack(fill="x", padx=18, pady=6)
+        return boton
+
+    def mostrar_inicio(self, guardar: bool = True) -> None:
+        if guardar:
+            self.historial = ["inicio"]
+        self.limpiar()
+        self.actualizar_header("Inicio")
+
+        hero = tk.Frame(self.contenido, bg=COLORS["primary"])
+        hero.pack(fill="x", padx=18, pady=(14, 12))
+        tk.Label(
+            hero,
             text="En que tramite te guiamos hoy?",
             bg=COLORS["primary"],
             fg="white",
@@ -461,8 +687,3 @@ if __name__ == "__main__":
         except Exception:
             pass
         self.root.destroy()
-
-
-if __name__ == "__main__":
-    app = WanbeApp()
-    app.ejecutar()
