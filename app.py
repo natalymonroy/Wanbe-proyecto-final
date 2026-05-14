@@ -26,18 +26,27 @@ class WanbeApp:
             "confirmar_finalizacion": True,
         }
         self.imagenes = {}
+        self._estado_corrupto = False  # Bandera para alertar al usuario
 
         # Intentar cargar estado persistido y mezclar con los valores por defecto
         estado = cargar_estado()
-        if isinstance(estado, dict):
+        if isinstance(estado, dict) and estado:
+            # Detectar si se cargó estado vacío (puede significar corrupción)
             self.paso_actual.update(estado.get("paso_actual", {}))
             self.checklist_listo.update(estado.get("checklist_listo", {}))
             self.configuracion.update(estado.get("configuracion", {}))
             self.historial = estado.get("historial", self.historial)
+        elif not estado:
+            # estado vacío sugiere que hubo un problema de carga
+            self._estado_corrupto = True
 
         self.construir_base()
         self.aplicar_configuracion()
         self.mostrar_inicio()
+        
+        # Mostrar alerta si hubo problema al cargar estado
+        self._mostrar_alerta_carga()
+        
         # Guardar estado al cerrar la ventana
         self.root.protocol("WM_DELETE_WINDOW", self._on_close)
 
@@ -365,18 +374,24 @@ class WanbeApp:
                 self.tarjeta(hijo["titulo"], hijo["subtitulo"], hijo["icono"], lambda h=hijo: self.cambiar_pantalla(h["id"]))
 
     def mostrar_tramite(self, tramite_id: str, guardar: bool = True) -> None:
-        if guardar:
-            self.historial.append(tramite_id)
-        self.limpiar()
+        try:
+            if guardar:
+                self.historial.append(tramite_id)
+            self.limpiar()
 
-        tramite = TRAMITES[tramite_id]
-        self.actualizar_header(tramite["titulo"])
-        self.titulo_seccion(f"{tramite['icono']}  {tramite['titulo']}", tramite["descripcion"])
+            if tramite_id not in TRAMITES:
+                messagebox.showerror("Error", f"Trámite '{tramite_id}' no encontrado.")
+                return
+            tramite = TRAMITES[tramite_id]
+            self.actualizar_header(tramite.get("titulo", "Desconocido"))
+            self.titulo_seccion(f"{tramite.get('icono', '')}  {tramite.get('titulo', '')}", tramite.get("descripcion", ""))
 
-        if not self.checklist_listo[tramite_id]:
-            self.mostrar_checklist(tramite_id)
-        else:
-            self.mostrar_paso(tramite_id)
+            if not self.checklist_listo.get(tramite_id, False):
+                self.mostrar_checklist(tramite_id)
+            else:
+                self.mostrar_paso(tramite_id)
+        except Exception as exc:
+            messagebox.showerror("Error", f"No se pudo mostrar el trámite:\n{exc}")
 
     def mostrar_checklist(self, tramite_id: str) -> None:
         tramite = TRAMITES[tramite_id]
@@ -434,61 +449,76 @@ class WanbeApp:
         boton_inicio.pack(fill="x", padx=14, pady=(10, 14))
 
     def iniciar_tramite(self, tramite_id: str) -> None:
-        self.checklist_listo[tramite_id] = True
-        self.paso_actual[tramite_id] = 0
-        self.mostrar_tramite(tramite_id, guardar=False)
-        guardar_estado(
-            {
-                "paso_actual": self.paso_actual,
-                "checklist_listo": self.checklist_listo,
-                "configuracion": self.configuracion,
-                "historial": self.historial,
-            }
-        )
+        try:
+            if tramite_id not in TRAMITES:
+                messagebox.showerror("Error", f"Trámite '{tramite_id}' no encontrado.")
+                return
+            self.checklist_listo[tramite_id] = True
+            self.paso_actual[tramite_id] = 0
+            self.mostrar_tramite(tramite_id, guardar=False)
+            guardar_estado(
+                {
+                    "paso_actual": self.paso_actual,
+                    "checklist_listo": self.checklist_listo,
+                    "configuracion": self.configuracion,
+                    "historial": self.historial,
+                }
+            )
+        except Exception as exc:
+            messagebox.showerror("Error", f"No se pudo iniciar el trámite:\n{exc}")
 
     def mostrar_paso(self, tramite_id: str) -> None:
-        tramite = TRAMITES[tramite_id]
-        indice = self.paso_actual[tramite_id]
-        pasos = tramite["pasos"]
-        paso = pasos[indice]
+        try:
+            if tramite_id not in TRAMITES:
+                messagebox.showerror("Error", f"Trámite '{tramite_id}' no encontrado.")
+                return
+            tramite = TRAMITES[tramite_id]
+            indice = self.paso_actual.get(tramite_id, 0)
+            pasos = tramite.get("pasos", [])
+            if not pasos or indice >= len(pasos):
+                messagebox.showerror("Error", "No hay pasos disponibles para este trámite.")
+                return
+            paso = pasos[indice]
 
-        tk.Label(
-            self.contenido,
-            text=f"Paso {indice + 1} de {len(pasos)}",
-            bg=COLORS["white"],
-            fg=COLORS["muted"],
-            font=("Helvetica", 10, "bold"),
-        ).pack(anchor="w", padx=18, pady=(4, 2))
-
-        progreso = tk.Frame(self.contenido, bg=COLORS["border"], height=10)
-        progreso.pack(fill="x", padx=18, pady=(0, 12))
-        progreso.pack_propagate(False)
-        tk.Frame(progreso, bg=COLORS["purple"], width=int(360 * ((indice + 1) / len(pasos))), height=10).pack(side="left")
-
-        caja = tk.Frame(self.contenido, bg=COLORS["white"], highlightbackground=COLORS["border"], highlightthickness=1)
-        caja.pack(fill="x", padx=18, pady=8)
-
-        tk.Label(caja, text=paso["titulo"], bg=COLORS["white"], fg=COLORS["text"], font=("Helvetica", 15, "bold"), wraplength=330, justify="left").pack(anchor="w", padx=14, pady=(14, 5))
-        tk.Label(caja, text=paso["texto"], bg=COLORS["white"], fg=COLORS["muted"], font=("Helvetica", 10), wraplength=330, justify="left").pack(anchor="w", padx=14, pady=(0, 8))
-
-        for numero, item in enumerate(paso["items"], start=1):
-            tk.Label(caja, text=f"{numero}. {item}", bg=COLORS["white"], fg=COLORS["text"], font=("Helvetica", 10), wraplength=320, justify="left").pack(anchor="w", padx=20, pady=2)
-
-        if paso.get("enlace"):
-            tk.Button(
-                caja,
-                text="Abrir enlace oficial",
-                command=lambda url=paso["enlace"]: webbrowser.open(url),
-                bg=COLORS["primary"],
-                fg="white",
-                relief="flat",
+            tk.Label(
+                self.contenido,
+                text=f"Paso {indice + 1} de {len(pasos)}",
+                bg=COLORS["white"],
+                fg=COLORS["muted"],
                 font=("Helvetica", 10, "bold"),
-                padx=10,
-                pady=9,
-            ).pack(fill="x", padx=14, pady=12)
+            ).pack(anchor="w", padx=18, pady=(4, 2))
 
-        self.documentos(tramite)
-        self.navegacion_pasos(tramite_id)
+            progreso = tk.Frame(self.contenido, bg=COLORS["border"], height=10)
+            progreso.pack(fill="x", padx=18, pady=(0, 12))
+            progreso.pack_propagate(False)
+            tk.Frame(progreso, bg=COLORS["purple"], width=int(360 * ((indice + 1) / len(pasos))), height=10).pack(side="left")
+
+            caja = tk.Frame(self.contenido, bg=COLORS["white"], highlightbackground=COLORS["border"], highlightthickness=1)
+            caja.pack(fill="x", padx=18, pady=8)
+
+            tk.Label(caja, text=paso["titulo"], bg=COLORS["white"], fg=COLORS["text"], font=("Helvetica", 15, "bold"), wraplength=330, justify="left").pack(anchor="w", padx=14, pady=(14, 5))
+            tk.Label(caja, text=paso["texto"], bg=COLORS["white"], fg=COLORS["muted"], font=("Helvetica", 10), wraplength=330, justify="left").pack(anchor="w", padx=14, pady=(0, 8))
+
+            for numero, item in enumerate(paso["items"], start=1):
+                tk.Label(caja, text=f"{numero}. {item}", bg=COLORS["white"], fg=COLORS["text"], font=("Helvetica", 10), wraplength=320, justify="left").pack(anchor="w", padx=20, pady=2)
+
+            if paso.get("enlace"):
+                tk.Button(
+                    caja,
+                    text="Abrir enlace oficial",
+                    command=lambda url=paso["enlace"]: webbrowser.open(url),
+                    bg=COLORS["primary"],
+                    fg="white",
+                    relief="flat",
+                    font=("Helvetica", 10, "bold"),
+                    padx=10,
+                    pady=9,
+                ).pack(fill="x", padx=14, pady=12)
+
+            self.documentos(tramite)
+            self.navegacion_pasos(tramite_id)
+        except Exception as exc:
+            messagebox.showerror("Error", f"No se pudo mostrar el paso:\n{exc}")
 
     def documentos(self, tramite: dict) -> None:
         caja = tk.Frame(self.contenido, bg=COLORS["warning_bg"], highlightbackground=COLORS["warning"], highlightthickness=1)
@@ -498,67 +528,87 @@ class WanbeApp:
             tk.Label(caja, text=f"- {requisito}", bg=COLORS["warning_bg"], fg=COLORS["warning"], font=("Helvetica", 10), wraplength=320, justify="left").pack(anchor="w", padx=20, pady=2)
 
     def navegacion_pasos(self, tramite_id: str) -> None:
-        barra = tk.Frame(self.contenido, bg=COLORS["white"])
-        barra.pack(fill="x", padx=18, pady=(8, 20))
+        try:
+            barra = tk.Frame(self.contenido, bg=COLORS["white"])
+            barra.pack(fill="x", padx=18, pady=(8, 20))
 
-        indice = self.paso_actual[tramite_id]
-        total = len(TRAMITES[tramite_id]["pasos"])
+            if tramite_id not in TRAMITES:
+                return
+            indice = self.paso_actual.get(tramite_id, 0)
+            total = len(TRAMITES[tramite_id].get("pasos", []))
+            if total == 0:
+                return
 
-        tk.Button(
-            barra,
-            text="Regresar",
-            command=lambda: self.cambiar_paso(tramite_id, -1),
-            state="normal" if indice > 0 else "disabled",
-            bg=COLORS["card"],
-            fg=COLORS["text"],
-            relief="flat",
-            font=("Helvetica", 10, "bold"),
-            pady=10,
-        ).pack(side="left", fill="x", expand=True, padx=(0, 5))
+            tk.Button(
+                barra,
+                text="Regresar",
+                command=lambda: self.cambiar_paso(tramite_id, -1),
+                state="normal" if indice > 0 else "disabled",
+                bg=COLORS["card"],
+                fg=COLORS["text"],
+                relief="flat",
+                font=("Helvetica", 10, "bold"),
+                pady=10,
+            ).pack(side="left", fill="x", expand=True, padx=(0, 5))
 
-        texto = "Finalizar" if indice == total - 1 else "Continuar"
-        comando = lambda: self.finalizar(tramite_id) if indice == total - 1 else self.cambiar_paso(tramite_id, 1)
-        tk.Button(
-            barra,
-            text=texto,
-            command=comando,
-            bg=COLORS["purple"],
-            fg="white",
-            relief="flat",
-            font=("Helvetica", 10, "bold"),
-            pady=10,
-        ).pack(side="left", fill="x", expand=True, padx=(5, 0))
+            texto = "Finalizar" if indice == total - 1 else "Continuar"
+            comando = lambda: self.finalizar(tramite_id) if indice == total - 1 else self.cambiar_paso(tramite_id, 1)
+            tk.Button(
+                barra,
+                text=texto,
+                command=comando,
+                bg=COLORS["purple"],
+                fg="white",
+                relief="flat",
+                font=("Helvetica", 10, "bold"),
+            ).pack(side="left", fill="x", expand=True, padx=(5, 0))
+        except Exception as exc:
+            print(f"Error en navegacion_pasos: {exc}")
 
     def cambiar_paso(self, tramite_id: str, cambio: int) -> None:
-        total = len(TRAMITES[tramite_id]["pasos"])
-        self.paso_actual[tramite_id] = max(0, min(total - 1, self.paso_actual[tramite_id] + cambio))
-        self.mostrar_tramite(tramite_id, guardar=False)
-        guardar_estado(
-            {
-                "paso_actual": self.paso_actual,
-                "checklist_listo": self.checklist_listo,
-                "configuracion": self.configuracion,
-                "historial": self.historial,
-            }
-        )
+        try:
+            if tramite_id not in TRAMITES:
+                messagebox.showerror("Error", f"Trámite '{tramite_id}' no encontrado.")
+                return
+            total = len(TRAMITES[tramite_id].get("pasos", []))
+            if total == 0:
+                return
+            self.paso_actual[tramite_id] = max(0, min(total - 1, self.paso_actual[tramite_id] + cambio))
+            self.mostrar_tramite(tramite_id, guardar=False)
+            guardar_estado(
+                {
+                    "paso_actual": self.paso_actual,
+                    "checklist_listo": self.checklist_listo,
+                    "configuracion": self.configuracion,
+                    "historial": self.historial,
+                }
+            )
+        except Exception as exc:
+            messagebox.showerror("Error", f"No se pudo cambiar de paso:\n{exc}")
 
     def finalizar(self, tramite_id: str) -> None:
-        if self.configuracion["confirmar_finalizacion"]:
-            respuesta = messagebox.askyesno("Wanbe", "Se completo la guia. Deseas volver al inicio?")
-            if not respuesta:
+        try:
+            if tramite_id not in TRAMITES:
+                messagebox.showerror("Error", f"Trámite '{tramite_id}' no encontrado.")
                 return
-        self.checklist_listo[tramite_id] = False
-        self.paso_actual[tramite_id] = 0
-        self.historial = ["inicio"]
-        self.mostrar_inicio(guardar=False)
-        guardar_estado(
-            {
-                "paso_actual": self.paso_actual,
-                "checklist_listo": self.checklist_listo,
-                "configuracion": self.configuracion,
-                "historial": self.historial,
-            }
-        )
+            if self.configuracion.get("confirmar_finalizacion", True):
+                respuesta = messagebox.askyesno("Wanbe", "Se completo la guia. Deseas volver al inicio?")
+                if not respuesta:
+                    return
+            self.checklist_listo[tramite_id] = False
+            self.paso_actual[tramite_id] = 0
+            self.historial = ["inicio"]
+            self.mostrar_inicio(guardar=False)
+            guardar_estado(
+                {
+                    "paso_actual": self.paso_actual,
+                    "checklist_listo": self.checklist_listo,
+                    "configuracion": self.configuracion,
+                    "historial": self.historial,
+                }
+            )
+        except Exception as exc:
+            messagebox.showerror("Error", f"No se pudo finalizar:\n{exc}")
 
     def mostrar_ayuda(self) -> None:
         texto = (
@@ -632,19 +682,22 @@ class WanbeApp:
         botones.pack(fill="x", padx=16, pady=(14, 16))
 
         def guardar() -> None:
-            self.configuracion["ventana_compacta"] = ventana_compacta.get()
-            self.configuracion["confirmar_finalizacion"] = confirmar_finalizacion.get()
-            self.aplicar_configuracion()
-            ventana.destroy()
-            guardar_estado(
-                {
-                    "paso_actual": self.paso_actual,
-                    "checklist_listo": self.checklist_listo,
-                    "configuracion": self.configuracion,
-                    "historial": self.historial,
-                }
-            )
-            messagebox.showinfo("Configuracion", "Cambios guardados correctamente.")
+            try:
+                self.configuracion["ventana_compacta"] = ventana_compacta.get()
+                self.configuracion["confirmar_finalizacion"] = confirmar_finalizacion.get()
+                self.aplicar_configuracion()
+                ventana.destroy()
+                guardar_estado(
+                    {
+                        "paso_actual": self.paso_actual,
+                        "checklist_listo": self.checklist_listo,
+                        "configuracion": self.configuracion,
+                        "historial": self.historial,
+                    }
+                )
+                messagebox.showinfo("Configuracion", "Cambios guardados correctamente.")
+            except Exception as exc:
+                messagebox.showerror("Error", f"No se pudo guardar la configuración:\n{exc}")
 
         tk.Button(
             botones,
@@ -673,6 +726,16 @@ class WanbeApp:
     def ejecutar(self) -> None:
         self.root.mainloop()
 
+    def _mostrar_alerta_carga(self) -> None:
+        """Muestra una alerta si hubo problema al cargar el estado persistido."""
+        if self._estado_corrupto:
+            messagebox.showwarning(
+                "Aviso de estado",
+                "No se pudo cargar el estado anterior.\n"
+                "Si el archivo estaba corrupto, se ha movido a data/ con timestamp.\n"
+                "Se inicia con configuración por defecto."
+            )
+
     def _on_close(self) -> None:
         """Handler para el cierre de la aplicacion: persiste estado y destruye la ventana."""
         try:
@@ -684,6 +747,11 @@ class WanbeApp:
                     "historial": self.historial,
                 }
             )
-        except Exception:
-            pass
+        except Exception as exc:
+            messagebox.showerror(
+                "Error al guardar",
+                f"No se pudo guardar el estado al cerrar:\n{exc}\n\n"
+                "Los cambios pueden no haberse guardado."
+            )
         self.root.destroy()
+
