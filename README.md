@@ -16,6 +16,11 @@ El proyecto se centra solo en tres guías:
 - DPI
 - Calcomanía
 
+## Documentación del proyecto
+
+- [DOCUMENTACION_NIT.md](DOCUMENTACION_NIT.md) - guía completa del trámite de NIT.
+- [DOCUMENTACION_CALCOMANIA.md](DOCUMENTACION_CALCOMANIA.md) - guía completa del trámite de calcomanía.
+
 ## Temas de Python usados
 
 - Listas para requisitos y pasos.

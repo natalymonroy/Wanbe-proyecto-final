@@ -45,11 +45,16 @@ def crear_ruta_tramite(tramite_id: str) -> str:
     return f"/tramite/{tramite_id}"
 
 
+def crear_nav_activo(titulo: str) -> str:
+    """Indica visualmente la sección activa del sitio web."""
+    return titulo.lower().replace(" ", "-")
+
+
 # ========== FUNCIONES DE RENDERIZADO HTML ==========
 # Generan HTML completo que el navegador muestra
 # Cada funcion retorna un string con HTML valido
 
-def render_layout(titulo: str, contenido: str) -> str:
+def render_layout(titulo: str, contenido: str, active_section: str = "inicio") -> str:
     """Plantilla general (master template) de la vista web.
     
     Contiene:
@@ -98,20 +103,21 @@ def render_layout(titulo: str, contenido: str) -> str:
       font-family: "Segoe UI", "Aptos", "Helvetica Neue", Arial, sans-serif;
     }}
     .phone {{
-      width: min(440px, calc(100% - 18px));
-      min-height: calc(100vh - 18px);
-      margin: 9px auto;
+      width: min(980px, calc(100% - 24px));
+      min-height: calc(100vh - 24px);
+      margin: 12px auto;
       background: var(--white);
       border: 1px solid rgba(219, 227, 240, 0.9);
-      border-radius: 24px;
-      box-shadow: 0 20px 60px rgba(24, 52, 153, 0.15);
+      border-radius: 26px;
+      box-shadow: 0 20px 60px rgba(24, 52, 153, 0.12);
       overflow: hidden;
     }}
     header {{
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 14px 16px 13px;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 18px;
       border-bottom: 1px solid var(--border);
       background: var(--white);
       position: sticky;
@@ -119,20 +125,39 @@ def render_layout(titulo: str, contenido: str) -> str:
       z-index: 2;
       backdrop-filter: blur(8px);
     }}
-    header img {{ width: 44px; height: 44px; object-fit: contain; filter: drop-shadow(0 4px 10px rgba(24, 52, 153, 0.14)); }}
+    .brand {{ display: flex; align-items: center; gap: 10px; min-width: 0; }}
+    header img {{ width: 46px; height: 46px; object-fit: contain; filter: drop-shadow(0 4px 10px rgba(24, 52, 153, 0.14)); }}
     header strong {{ display: block; color: var(--primary); font-size: 18px; letter-spacing: 0.4px; }}
     header span {{ color: var(--muted); font-size: 11px; font-weight: 700; }}
-    main {{ padding: 16px; }}
+    .header-copy {{ min-width: 0; }}
+    .header-copy p {{ margin: 3px 0 0; color: var(--muted); font-size: 12px; line-height: 1.35; }}
+    .site-nav {{ display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }}
+    .site-nav a {{
+      padding: 8px 12px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      background: rgba(24, 52, 153, 0.08);
+      border: 1px solid rgba(24, 52, 153, 0.12);
+      white-space: nowrap;
+    }}
+    .site-nav a.active {{ background: var(--primary); color: white; border-color: var(--primary); }}
+    main {{ padding: 18px; }}
     .hero {{
       background: linear-gradient(135deg, #4e0f88 0%, var(--purple) 42%, var(--primary) 100%);
       color: white;
-      padding: 22px 18px 20px;
+      padding: 24px 20px 22px;
       margin-bottom: 14px;
       border-radius: 20px;
       box-shadow: 0 14px 28px rgba(92, 19, 153, 0.18);
     }}
-    .hero h1 {{ margin: 0 0 8px; font-size: 24px; line-height: 1.1; letter-spacing: -0.3px; }}
-    .hero p {{ margin: 0; color: #dbeafe; font-size: 13px; line-height: 1.4; }}
+    .hero-eyebrow {{ margin: 0 0 8px; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: #dbeafe; font-weight: 800; }}
+    .hero h1 {{ margin: 0 0 8px; font-size: 28px; line-height: 1.06; letter-spacing: -0.5px; }}
+    .hero p {{ margin: 0; color: #dbeafe; font-size: 13px; line-height: 1.45; max-width: 56ch; }}
+    .hero-actions {{ display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }}
+    .hero-actions .button {{ background: rgba(255, 255, 255, 0.16); border: 1px solid rgba(255, 255, 255, 0.18); }}
     form {{ display: flex; gap: 8px; margin-bottom: 14px; }}
     input {{
       flex: 1;
@@ -165,6 +190,15 @@ def render_layout(titulo: str, contenido: str) -> str:
     .section-title {{ margin: 4px 0 12px; }}
     .section-title h2 {{ margin: 0; color: var(--primary); font-size: 21px; }}
     .section-title p {{ margin: 5px 0 0; color: var(--muted); font-size: 13px; }}
+    .breadcrumb {{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 12px;
+      font-size: 12px;
+      color: var(--muted);
+    }}
+    .breadcrumb a {{ color: var(--primary); text-decoration: none; font-weight: 700; }}
     .card {{
       display: flex;
       align-items: center;
@@ -237,12 +271,12 @@ def render_layout(titulo: str, contenido: str) -> str:
       position: relative;
       overflow: hidden;
       margin-bottom: 14px;
-      border-radius: 22px;
-      padding: 26px 16px 22px;
+      border-radius: 20px;
+      padding: 24px 18px 20px;
       text-align: center;
       color: white;
-      background: linear-gradient(140deg, #0f766e 0%, #0891b2 52%, #1d4ed8 100%);
-      box-shadow: 0 16px 34px rgba(14, 116, 144, 0.28);
+      background: linear-gradient(145deg, #3f0f69 0%, var(--purple) 38%, var(--primary) 100%);
+      box-shadow: 0 14px 26px rgba(45, 21, 84, 0.24);
       animation: panel-reveal 420ms ease-out;
     }}
     .completion-hero::before {{
@@ -253,64 +287,61 @@ def render_layout(titulo: str, contenido: str) -> str:
       border-radius: 999px;
       top: -60px;
       right: -40px;
-      background: rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.1);
     }}
     .completion-hero::after {{
       content: "";
       position: absolute;
-      inset: 0;
-      background-image:
-        radial-gradient(circle at 8% 18%, rgba(255, 255, 255, 0.7) 0 3px, transparent 3.2px),
-        radial-gradient(circle at 22% 72%, rgba(186, 230, 253, 0.88) 0 2.5px, transparent 2.7px),
-        radial-gradient(circle at 38% 28%, rgba(134, 239, 172, 0.88) 0 2.5px, transparent 2.7px),
-        radial-gradient(circle at 56% 82%, rgba(255, 255, 255, 0.72) 0 2.2px, transparent 2.4px),
-        radial-gradient(circle at 74% 30%, rgba(125, 211, 252, 0.88) 0 2.8px, transparent 3px),
-        radial-gradient(circle at 90% 66%, rgba(190, 242, 100, 0.82) 0 2.3px, transparent 2.5px);
-      opacity: 0.65;
-      animation: confetti-drift 2200ms ease-in-out infinite alternate;
+      left: 18px;
+      right: 18px;
+      bottom: 14px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.42) 20%, rgba(255, 255, 255, 0.52) 50%, rgba(255, 255, 255, 0.42) 80%, transparent 100%);
+      opacity: 0.8;
       pointer-events: none;
     }}
     .completion-check {{
-      width: 124px;
-      height: 124px;
-      margin: 0 auto 14px;
-      border-radius: 999px;
-      display: grid;
-      place-items: center;
-      font-size: 66px;
-      font-weight: 900;
-      background: radial-gradient(circle at 35% 28%, #bbf7d0 0%, #22c55e 62%, #15803d 100%);
-      box-shadow: 0 18px 28px rgba(21, 128, 61, 0.36), inset 0 2px 5px rgba(255, 255, 255, 0.4);
+      margin: 0 auto 6px;
+      display: block;
+      font-size: 88px;
+      line-height: 1;
+      font-weight: 800;
+      color: #e7f0ff;
+      text-shadow: 0 8px 18px rgba(16, 23, 59, 0.28);
       animation: check-pop 560ms ease-out;
       position: relative;
       z-index: 1;
     }}
     .completion-title {{
-      margin: 0;
-      font-size: 35px;
+      margin: 2px 0 0;
+      font-size: 34px;
       line-height: 1.06;
-      letter-spacing: -0.5px;
+      letter-spacing: -0.35px;
+      font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+      font-weight: 700;
       position: relative;
       z-index: 1;
     }}
     .completion-subtitle {{
-      margin: 8px 0 0;
-      color: #d1fae5;
+      margin: 10px auto 0;
+      max-width: 34ch;
+      color: #dde8ff;
       font-size: 14px;
-      line-height: 1.4;
+      line-height: 1.45;
+      letter-spacing: 0.01em;
       position: relative;
       z-index: 1;
     }}
     .completion-chip {{
       display: inline-flex;
       margin-top: 12px;
-      padding: 8px 12px;
+      padding: 7px 11px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.14);
       border: 1px solid rgba(255, 255, 255, 0.24);
       font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.03em;
+      font-weight: 600;
+      letter-spacing: 0.02em;
       position: relative;
       z-index: 1;
     }}
@@ -323,10 +354,6 @@ def render_layout(titulo: str, contenido: str) -> str:
       0% {{ transform: translateY(8px); opacity: 0; }}
       100% {{ transform: translateY(0); opacity: 1; }}
     }}
-    @keyframes confetti-drift {{
-      0% {{ transform: translateY(0) scale(1); opacity: 0.52; }}
-      100% {{ transform: translateY(6px) scale(1.03); opacity: 0.76; }}
-    }}
     .secondary {{ background: var(--card); color: var(--text); border: 1px solid var(--border); }}
     .warning {{ background: var(--warning-bg); border-color: rgba(146, 64, 14, 0.25); }}
     .warning h4 {{ margin: 0 0 8px; color: var(--warning); font-size: 14px; }}
@@ -335,12 +362,22 @@ def render_layout(titulo: str, contenido: str) -> str:
     .step-number {{ color: var(--purple); font-weight: 800; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }}
     .requirements {{ background: var(--warning-bg); border-color: rgba(146, 64, 14, 0.25); }}
     .requirements h3, .requirements li {{ color: var(--warning); }}
+    .site-footer {{
+      margin-top: 14px;
+      padding: 14px 18px 18px;
+      border-top: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(248, 250, 252, 0.1), rgba(234, 239, 252, 0.6));
+    }}
+    .site-footer p {{ margin: 0; color: var(--muted); font-size: 12px; line-height: 1.45; }}
+    .site-footer strong {{ color: var(--primary); }}
     @media (max-width: 420px) {{
       .phone {{ width: min(100% - 12px, 440px); margin: 6px auto; border-radius: 20px; }}
       main {{ padding: 12px; }}
       .hero h1 {{ font-size: 21px; }}
-      .completion-title {{ font-size: 25px; }}
-      .completion-check {{ width: 94px; height: 94px; font-size: 50px; }}
+      header {{ flex-direction: column; align-items: flex-start; }}
+      .site-nav {{ justify-content: flex-start; }}
+      .completion-title {{ font-size: 27px; }}
+      .completion-check {{ font-size: 76px; }}
       form {{ flex-direction: column; }}
     }}
   </style>
@@ -348,15 +385,26 @@ def render_layout(titulo: str, contenido: str) -> str:
 <body>
   <div class="phone">
     <header>
-      <img src="/assets/logo.png" alt="Wanbe">
-      <div>
-        <strong>WANBE</strong>
-        <span>{escape(titulo)}</span>
+      <div class="brand">
+        <img src="/assets/logo.png" alt="Wanbe">
+        <div class="header-copy">
+          <strong>WANBE</strong>
+          <span>{escape(titulo)}</span>
+          <p>Guía institucional para trámites SAT y RENAP.</p>
+        </div>
       </div>
+      <nav class="site-nav" aria-label="Navegación principal">
+        <a href="/" class="{'active' if active_section == 'inicio' else ''}">Inicio</a>
+        <a href="/categoria/sat" class="{'active' if active_section == 'sat' else ''}">SAT</a>
+        <a href="/categoria/renap" class="{'active' if active_section == 'renap' else ''}">RENAP</a>
+      </nav>
     </header>
     <main>
       {contenido}
     </main>
+    <footer class="site-footer">
+      <p><strong>Wanbe</strong> | Vista web local creada para consultar requisitos y pasos de trámites de forma clara.</p>
+    </footer>
   </div>
 </body>
 </html>"""
@@ -426,7 +474,13 @@ def render_inicio(query: str = "") -> str:
         "Inicio",
         f"""
 <section class="hero">
+  <p class="hero-eyebrow">Plataforma de orientación</p>
   <h1>¿En qué trámite te guiamos hoy?</h1>
+  <p>Explora las guías oficiales de SAT y RENAP, o usa el buscador para llegar directo al trámite que necesitas.</p>
+  <div class="hero-actions">
+    <a class="button" href="/categoria/sat">Explorar SAT</a>
+    <a class="button" href="/categoria/renap">Explorar RENAP</a>
+  </div>
 </section>
 <form action="/" method="get">
   <input name="q" value="{escape(query)}" placeholder="Buscar tramite...">
@@ -439,7 +493,8 @@ def render_inicio(query: str = "") -> str:
 </section>
 {tarjetas}
 """,
-    )
+    active_section="inicio",
+  )
 
 
 def render_categoria(categoria_id: str) -> str:
@@ -473,13 +528,15 @@ def render_categoria(categoria_id: str) -> str:
         categoria["titulo"],
         f"""
 <a class="button back" href="/">Volver</a>
+<div class="breadcrumb"><a href="/">Inicio</a> / <a href="{crear_ruta(categoria_id)}">{escape(categoria["titulo"])}</a></div>
 <section class="section-title">
   <h2>{escape(categoria["titulo"])}</h2>
   <p>{escape(categoria["subtitulo"])}</p>
 </section>
 {''.join(tarjetas)}
 """,
-    )
+    active_section=categoria_id,
+  )
 
 
 def obtener_categoria_por_portal(portal: str) -> str:
@@ -507,8 +564,11 @@ def render_tramite_resumen(tramite_id: str) -> str:
     if tramite is None:
         return render_layout("No encontrado", '<a class="button back" href="/">Volver</a><div class="panel"><h3>No encontrado</h3></div>')
 
+    categoria_url = crear_ruta(obtener_categoria_por_portal(tramite["portal"]))
+
     contenido_html = f"""
 <a class="button back" href="/">Volver</a>
+<div class="breadcrumb"><a href="/">Inicio</a> / <a href="{categoria_url}">{escape(tramite["portal"])}</a> / {escape(tramite["titulo"])}</div>
 <section class="completion-hero">
   <div class="completion-check">&#10003;</div>
   <h2 class="completion-title">¡Guía completada!</h2>
@@ -586,7 +646,7 @@ def render_tramite_resumen(tramite_id: str) -> str:
 </nav>
 """
 
-    return render_layout(tramite["titulo"], contenido_html)
+    return render_layout(tramite["titulo"], contenido_html, active_section=tramite["portal"].lower())
 
 
 def render_tramite(tramite_id: str, paso_actual: int = 1) -> str:
@@ -679,10 +739,13 @@ def render_tramite(tramite_id: str, paso_actual: int = 1) -> str:
         info_html = "<br>".join(info_items)
         info_tramite = f'<div class="panel info" style="background: #f0f5ff; border-left: 4px solid #183499;"><p>{info_html}</p></div>'
 
+    breadcrumb_html = f'<div class="breadcrumb"><a href="/">Inicio</a> / <a href="{categoria_url}">{escape(tramite["portal"])}</a> / {escape(tramite["titulo"])}</div>'
+
     return render_layout(
         tramite["titulo"],
         f"""
 <a class="button back" href="/">Volver</a>
+  {breadcrumb_html}
 <section class="section-title">
   <h2>{escape(tramite["titulo"])}</h2>
   <p>{escape(tramite["descripcion"])}</p>
@@ -694,7 +757,8 @@ def render_tramite(tramite_id: str, paso_actual: int = 1) -> str:
 </section>
 {paso_html}
 """,
-    )
+    active_section=tramite["portal"].lower(),
+  )
 
 
 # ========== SERVIDOR HTTP ==========
